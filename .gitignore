@@ -1,0 +1,58 @@
+# --- OS ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+desktop.ini
+
+# --- Editors / IDEs ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-workspace
+
+# --- Node / JS (likely, once a stack is chosen) ---
+node_modules/
+.pnp
+.pnp.js
+.npm
+.yarn/cache
+.yarn/unplugged
+.pnpm-store/
+
+# --- Build output / caches ---
+dist/
+build/
+out/
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.svelte-kit/
+.astro/
+.turbo/
+.vite/
+coverage/
+
+# --- Environment / secrets ---
+.env
+.env.*
+!.env.example
+*.local
+
+# --- Logs ---
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Misc ---
+*.tmp
+*.pid
+.eslintcache
