@@ -1,0 +1,57 @@
+{
+  "$comment": "Marcin Kulbicki — Photography design tokens. Source of truth: design-reference/portfolio.css",
+  "color": {
+    "bg": "#0b0b0c",
+    "fg": "#edeae4",
+    "muted": "rgba(237,234,228,0.52)",
+    "faint": "rgba(237,234,228,0.28)",
+    "line": "rgba(237,234,228,0.15)",
+    "accent": "#ff3b1d",
+    "slotBg": "#161617",
+    "onAccent": "#0b0b0c"
+  },
+  "font": {
+    "display": "Archivo",
+    "body": "Archivo",
+    "mono": "Space Mono",
+    "googleFontsHref": "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap",
+    "displayWeight": 800,
+    "displayTracking": "-0.03em",
+    "weights": [400, 500, 600, 700, 800, 900]
+  },
+  "typeScale": {
+    "heroName": "clamp(30px, 6vw, 88px)",
+    "sectionTitle": "clamp(40px, 8vw, 120px)",
+    "chapterTitle": "clamp(40px, 8vw, 120px)",
+    "body": "clamp(13px, 1.2vw, 19px)",
+    "label": "clamp(9px, .78vw, 13px)",
+    "labelTracking": "0.18em"
+  },
+  "texture": {
+    "grainOpacity": 0.1,
+    "grainBlend": "soft-light",
+    "photoFilter": "contrast(1.07) saturate(0.94) brightness(0.98)",
+    "vignette": "radial-gradient(120% 100% at 50% 42%, transparent 52%, rgba(0,0,0,0.55) 100%)"
+  },
+  "motion": {
+    "ease": "cubic-bezier(.76,0,.24,1)",
+    "slideMs": 900,
+    "crossfadeMs": 900,
+    "revealMs": 1000,
+    "scrollLockMs": 820,
+    "introHoldMs": 2000,
+    "introDimFrom": 1,
+    "introDimTo": 0.5
+  },
+  "layout": {
+    "padEdge": "clamp(24px, 5vw, 96px)",
+    "z": { "grain": 40, "vignette": 38, "nav": 30, "chrome": 25 }
+  },
+  "imageFit": {
+    "landingBand": "cover",
+    "chapterHero": "cover",
+    "inSectionFrame": "contain",
+    "overviewThumb": "contain",
+    "overviewLead": "cover"
+  }
+}

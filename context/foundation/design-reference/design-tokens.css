@@ -1,0 +1,52 @@
+/* ============================================================
+   Marcin Kulbicki — Photography · Design Tokens ("Grain")
+   Source of truth: design-reference/portfolio.css
+   ============================================================ */
+:root {
+  /* ---- colour ---- */
+  --bg:            #0b0b0c;   /* ground / near-black            */
+  --fg:            #edeae4;   /* ink / cream                    */
+  --muted:         rgba(237,234,228,.52);
+  --faint:         rgba(237,234,228,.28);
+  --line:          rgba(237,234,228,.15);  /* hairlines        */
+  --accent:        #ff3b1d;   /* signal red — the only accent   */
+  --slotbg:        #161617;   /* empty photo slot background     */
+  --on-accent:     #0b0b0c;   /* text on accent fills            */
+
+  /* ---- type ---- */
+  --font-display:  "Archivo", system-ui, sans-serif;  /* 400–900 */
+  --font-body:     "Archivo", system-ui, sans-serif;
+  --font-mono:     "Space Mono", monospace;           /* labels  */
+  --display-weight: 800;
+  --display-track:  -0.03em;
+  /* fluid type ramp (matches the reference) */
+  --fs-hero-name:  clamp(30px, 6vw, 88px);
+  --fs-section:    clamp(40px, 8vw, 120px);
+  --fs-chapter:    clamp(40px, 8vw, 120px);
+  --fs-body:       clamp(13px, 1.2vw, 19px);
+  --fs-label:      clamp(9px, .78vw, 13px);  /* mono caps        */
+  --tracking-label: .18em;
+
+  /* ---- texture / image ---- */
+  --grain-opacity: .10;
+  --photo-filter:  contrast(1.07) saturate(.94) brightness(.98);
+  --vignette:      radial-gradient(120% 100% at 50% 42%, transparent 52%, rgba(0,0,0,.55) 100%);
+
+  /* ---- motion ---- */
+  --ease:          cubic-bezier(.76, 0, .24, 1);
+  --dur-slide:     .9s;    /* frame-to-frame / section slide     */
+  --dur-cross:     .9s;    /* backdrop crossfade                 */
+  --dur-reveal:    1s;     /* entrance reveals                   */
+  --scroll-lock:   820ms;  /* min time between hijacked steps    */
+  --intro-hold:    2000ms; /* title shown before it collapses    */
+
+  /* ---- layout rhythm ---- */
+  --pad-edge:      clamp(24px, 5vw, 96px);  /* screen gutter      */
+  --z-grain:       40;
+  --z-vignette:    38;
+  --z-nav:         30;
+  --z-chrome:      25;
+}
+
+/* Fonts: load before use, e.g.
+   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"> */
