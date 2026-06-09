@@ -18,8 +18,9 @@ const apiVersion = loadedEnv.PUBLIC_SANITY_API_VERSION ?? "2025-01-01";
 // https://astro.build/config
 export default defineConfig({
   output: "static",
-  // Live deploy URL — used by @astrojs/sitemap to emit absolute sitemap URLs.
-  site: "https://photo-portfolio.marcin-kulbicki.workers.dev",
+  // Canonical custom domain — used by @astrojs/sitemap for absolute URLs.
+  // (Also reachable at www.marcinkulbicki.com and the *.workers.dev subdomain.)
+  site: "https://marcinkulbicki.com",
   // react() must come before sanity() — the embedded Studio is a React app.
   integrations: [
     react(),

@@ -69,11 +69,11 @@ The repo is local-only; Cloudflare Builds (Phase 5) and the publish loop (Phase 
 - ☑ **Push the production branch:** `git push -u origin main` → `origin/main` at `5bdbf2c` (user ran it; SSH host-key trust added locally).
 - ☑ **Verify** `origin` set; `https://github.com/yakksiek/photo-portfolio` (PUBLIC). Unblocks Phase 5's "connect the repo" step.
 
-## Phase 5 — First deploy to Cloudflare  ◑  *(deploy done; Git-connect gate open)*
+## Phase 5 — First deploy to Cloudflare  ☑
 
 - ☑ **Auth (manual):** `wrangler` already logged in as marcin.kulbicki@gmail.com (OAuth), account `b2e5f91cf1c4b7f738e355c30242776a` — login gate already satisfied.
 - ☑ **Validation deploy (CLI):** `npm run deploy` live at **https://photo-portfolio.marcin-kulbicki.workers.dev** (Version `82a686ca`). `/` 200 w/ portfolio data, `/admin/` 200 Studio shell, sitemap 200. *Two config fixes were needed mid-deploy: removed stale `.wrangler/deploy/config.json` (orphaned adapter redirect), and removed `assets.binding` from `wrangler.jsonc` (invalid on an assets-only Worker).*
-- ☐ **Connect Git for auto-deploys (manual, dashboard):** Workers & Pages → the Worker → Settings → Builds → connect the GitHub repo `yakksiek/photo-portfolio`. **Set production branch = `main`**, build command `npm run build`, deploy command `wrangler deploy` (or accept the wrangler.jsonc-detected defaults). This Git connection is **required** for the publish loop in Phase 6 (deploy hooks trigger Workers Builds, which needs the repo connected).
+- ☑ **Connect Git for auto-deploys (manual, dashboard):** repo `yakksiek/photo-portfolio` connected, production branch `main`. *(Required extending the Cloudflare GitHub App's repo access on GitHub — it was scoped to one repo.)* **Verified:** push of `811e3c7` auto-built and redeployed in ~30s (live sitemap flipped to the real `marcin-kulbicki.workers.dev` URL). The Git→Cloudflare auto-deploy half of the publish loop is proven.
 
 ## Phase 6 — Publish-without-code loop  ☐  *(the #1 risk — do not skip)*
 
@@ -86,7 +86,8 @@ Make a Studio publish rebuild the live site.
 
 ## Phase 7 — Post-deploy hardening  ☐
 
-- ☑ **Finalize `site`:** `astro.config.mjs` `site:` set to `https://photo-portfolio.marcin-kulbicki.workers.dev` → next deploy emits a correct absolute sitemap.
+- ☑ **Custom domain (brought forward from "later"):** bought `marcinkulbicki.com` via Cloudflare Registrar; attached apex `marcinkulbicki.com` + `www.marcinkulbicki.com` as **Custom Domains** on the Worker (auto DNS + SSL). Both live over HTTPS (200, valid cert). `*.workers.dev` still works alongside.
+- ☑ **Finalize `site`:** `astro.config.mjs` `site:` set to the canonical apex `https://marcinkulbicki.com` → next deploy emits a correct absolute sitemap.
 - ☐ **Sanity CORS for the Studio origin:** `npx sanity cors add https://photo-portfolio.<account>.workers.dev --credentials`. *(Needed because the embedded Studio is a browser app hitting the Sanity API from the workers.dev origin. The public site itself fetches at build time and needs no runtime CORS.)*
 - ☐ **Rollback drill:** `wrangler deployments list`, then practice `wrangler rollback` so the revert path is known before it's needed (seconds to revert — static assets only).
 - ☐ **Account 2FA** (vendor-concentration mitigation) — confirm enabled.
