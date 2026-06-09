@@ -18,9 +18,8 @@ const apiVersion = loadedEnv.PUBLIC_SANITY_API_VERSION ?? "2025-01-01";
 // https://astro.build/config
 export default defineConfig({
   output: "static",
-  // Placeholder until the real *.workers.dev URL is known (Phase 7).
-  // @astrojs/sitemap needs `site` set to emit a sitemap.
-  site: "https://photo-portfolio.workers.dev",
+  // Live deploy URL — used by @astrojs/sitemap to emit absolute sitemap URLs.
+  site: "https://photo-portfolio.marcin-kulbicki.workers.dev",
   // react() must come before sanity() — the embedded Studio is a React app.
   integrations: [
     react(),

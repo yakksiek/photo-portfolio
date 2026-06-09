@@ -58,22 +58,22 @@ Close the `master` mismatch (Risk: "Production branch mismatch").
 - ☑ **`.github/workflows/ci.yml`** — `branches: [master]` → `branches: [main]` in both `push` and `pull_request`.
 - ☑ **`CLAUDE.md`** — rendering-mode note now says static is applied (`studioRouterHistory: "hash"`); "Cloudflare Pages" → "Cloudflare Workers Static Assets"; deploy branch `master` → `main`; stale "workerd SSR" Commands note replaced with the static/deploy-script note.
 - ☑ **`context/foundation/tech-stack.md`** — `deployment_target: cloudflare-pages` → `cloudflare-workers`; prose "Cloudflare Pages … on merge" → "Workers Static Assets … on merge to `main`".
-- ☐ Merge `sanity-cms-portfolio` → `main` (production branch) once the above lands. *(Manual gate — user approves the merge.)*
+- ☑ Merge `sanity-cms-portfolio` → `main` (production branch) once the above lands. *(Fast-forward; `main` now at `5bdbf2c`.)*
 
-## Phase 4 — Create the GitHub remote  ☐  *(prerequisite for Cloudflare Builds)*
+## Phase 4 — Create the GitHub remote  ☑  *(prerequisite for Cloudflare Builds)*
 
 The repo is local-only; Cloudflare Builds (Phase 5) and the publish loop (Phase 6) both require it on GitHub.
 
-- ☐ **Commit outstanding work** on `sanity-cms-portfolio` (the Phase 1–3 changes), then ensure `main` holds the merge from Phase 3.
-- ☐ **Create the remote (CLI):** `gh repo create photo-portfolio --private --source=. --remote=origin` (uses the authenticated `yakksiek` account; SSH protocol). *Default `--private`; switch to `--public` if you want the portfolio source open — the Sanity coordinates in code are public/non-secret either way. (User's call.)*
-- ☐ **Push the production branch:** `git push -u origin main`. Optionally push `sanity-cms-portfolio` too if you want the feature branch backed up / preview-deployable.
-- ☐ **Verify** `git remote -v` shows `origin` and the branch is visible with `gh repo view --web`. This is what unblocks Phase 5's "connect the repo" step.
+- ☑ **Commit outstanding work** on `sanity-cms-portfolio` (the Phase 1–3 changes), then ensure `main` holds the merge from Phase 3.
+- ☑ **Create the remote (CLI):** created **public** as `yakksiek/photo-portfolio` (`gh repo create photo-portfolio --public --source=. --remote=origin`).
+- ☑ **Push the production branch:** `git push -u origin main` → `origin/main` at `5bdbf2c` (user ran it; SSH host-key trust added locally).
+- ☑ **Verify** `origin` set; `https://github.com/yakksiek/photo-portfolio` (PUBLIC). Unblocks Phase 5's "connect the repo" step.
 
-## Phase 5 — First deploy to Cloudflare  ☐  *(manual gates)*
+## Phase 5 — First deploy to Cloudflare  ◑  *(deploy done; Git-connect gate open)*
 
-- ☐ **Auth (manual):** user runs `! wrangler login` (interactive OAuth) — or set a **scoped** `CLOUDFLARE_API_TOKEN` (Workers Scripts: Edit + Account: Read only, per infrastructure.md's minimal-permissions posture). The agent cannot complete interactive login.
-- ☐ **Validation deploy (CLI):** `npm run deploy` (= `astro build && wrangler deploy`). Capture the resulting `https://photo-portfolio.<account>.workers.dev` URL. *Human approves this first production deploy.*
-- ☐ **Connect Git for auto-deploys (manual, dashboard):** Workers & Pages → the Worker → Settings → Builds → connect the GitHub repo. **Set production branch = `main`**, build command `npm run build`, deploy command `wrangler deploy` (or accept the wrangler.jsonc-detected defaults). This Git connection is **required** for the publish loop in Phase 6 (deploy hooks trigger Workers Builds, which needs the repo connected).
+- ☑ **Auth (manual):** `wrangler` already logged in as marcin.kulbicki@gmail.com (OAuth), account `b2e5f91cf1c4b7f738e355c30242776a` — login gate already satisfied.
+- ☑ **Validation deploy (CLI):** `npm run deploy` live at **https://photo-portfolio.marcin-kulbicki.workers.dev** (Version `82a686ca`). `/` 200 w/ portfolio data, `/admin/` 200 Studio shell, sitemap 200. *Two config fixes were needed mid-deploy: removed stale `.wrangler/deploy/config.json` (orphaned adapter redirect), and removed `assets.binding` from `wrangler.jsonc` (invalid on an assets-only Worker).*
+- ☐ **Connect Git for auto-deploys (manual, dashboard):** Workers & Pages → the Worker → Settings → Builds → connect the GitHub repo `yakksiek/photo-portfolio`. **Set production branch = `main`**, build command `npm run build`, deploy command `wrangler deploy` (or accept the wrangler.jsonc-detected defaults). This Git connection is **required** for the publish loop in Phase 6 (deploy hooks trigger Workers Builds, which needs the repo connected).
 
 ## Phase 6 — Publish-without-code loop  ☐  *(the #1 risk — do not skip)*
 
@@ -86,7 +86,7 @@ Make a Studio publish rebuild the live site.
 
 ## Phase 7 — Post-deploy hardening  ☐
 
-- ☐ **Finalize `site`:** set the real `*.workers.dev` URL in `astro.config.mjs` `site:` (Phase 1 placeholder) → rebuild so the sitemap is correct.
+- ☑ **Finalize `site`:** `astro.config.mjs` `site:` set to `https://photo-portfolio.marcin-kulbicki.workers.dev` → next deploy emits a correct absolute sitemap.
 - ☐ **Sanity CORS for the Studio origin:** `npx sanity cors add https://photo-portfolio.<account>.workers.dev --credentials`. *(Needed because the embedded Studio is a browser app hitting the Sanity API from the workers.dev origin. The public site itself fetches at build time and needs no runtime CORS.)*
 - ☐ **Rollback drill:** `wrangler deployments list`, then practice `wrangler rollback` so the revert path is known before it's needed (seconds to revert — static assets only).
 - ☐ **Account 2FA** (vendor-concentration mitigation) — confirm enabled.
