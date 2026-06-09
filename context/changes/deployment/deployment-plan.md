@@ -75,16 +75,16 @@ The repo is local-only; Cloudflare Builds (Phase 5) and the publish loop (Phase 
 - ☑ **Validation deploy (CLI):** `npm run deploy` live at **https://photo-portfolio.marcin-kulbicki.workers.dev** (Version `82a686ca`). `/` 200 w/ portfolio data, `/admin/` 200 Studio shell, sitemap 200. *Two config fixes were needed mid-deploy: removed stale `.wrangler/deploy/config.json` (orphaned adapter redirect), and removed `assets.binding` from `wrangler.jsonc` (invalid on an assets-only Worker).*
 - ☑ **Connect Git for auto-deploys (manual, dashboard):** repo `yakksiek/photo-portfolio` connected, production branch `main`. *(Required extending the Cloudflare GitHub App's repo access on GitHub — it was scoped to one repo.)* **Verified:** push of `811e3c7` auto-built and redeployed in ~30s (live sitemap flipped to the real `marcin-kulbicki.workers.dev` URL). The Git→Cloudflare auto-deploy half of the publish loop is proven.
 
-## Phase 6 — Publish-without-code loop  ☐  *(the #1 risk — do not skip)*
+## Phase 6 — Publish-without-code loop  ☑  *(the #1 risk — proven)*
 
 Make a Studio publish rebuild the live site.
 
-- ☐ **Create a Workers deploy hook (manual, dashboard):** the Worker → Settings → Builds → Deploy Hooks → name it, **branch = `main`** → copy the unique URL. (Treat the URL as a secret — anyone with it can trigger a build.)
-- ☐ **Add the Sanity webhook (manual, manage.sanity.io → API → Webhooks):** point it at the deploy-hook URL, method **POST**, dataset filter `production`, trigger on create/update/delete (and publish). No projection/secret needed — the deploy hook authenticates via its URL.
-- ☐ **Test end-to-end:** edit a photo/section in Studio → Publish → confirm a Workers build fires (dashboard build log) → confirm the change appears on the live URL after the rebuild. This is the gate that proves "self-manageable."
-- ☐ **Edge case — debounce:** Sanity fires a webhook per publish; rapid edits could nibble the Workers Builds minute quota. Acceptable for an occasionally-updated portfolio; note it, don't over-engineer. If it becomes noisy, add a Sanity webhook filter/delay later.
+- ☑ **Create a Workers deploy hook (manual, dashboard):** created on the Worker, branch `main`; URL kept secret (pasted straight into the Sanity webhook).
+- ☑ **Add the Sanity webhook (manual, manage.sanity.io → API → Webhooks):** points at the deploy-hook URL, method **POST**, dataset `production`, trigger on create/update/delete. **Drafts toggle left OFF** (Sanity's native control for excluding autosave drafts — makes the explicit `!(_id in path("drafts.**"))` filter redundant, so the filter was cleared). No secret — the deploy hook authenticates via its URL.
+- ☑ **Test end-to-end:** reordered chapters in Studio → Publish → Workers build fired → reordered content confirmed live after rebuild. Self-manageable loop proven (verified manually by the owner).
+- ☑ **Edge case — debounce:** the Drafts-OFF setting means only published mutations fire the hook, so autosave keystrokes don't nibble the build quota. Good enough for an occasionally-updated portfolio.
 
-## Phase 7 — Post-deploy hardening  ☐
+## Phase 7 — Post-deploy hardening  ◑  *(domain/site/CORS done; rollback drill + 2FA optional)*
 
 - ☑ **Custom domain (brought forward from "later"):** bought `marcinkulbicki.com` via Cloudflare Registrar; attached apex `marcinkulbicki.com` + `www.marcinkulbicki.com` as **Custom Domains** on the Worker (auto DNS + SSL). Both live over HTTPS (200, valid cert). `*.workers.dev` still works alongside.
 - ☑ **Finalize `site`:** `astro.config.mjs` `site:` set to the canonical apex `https://marcinkulbicki.com` → next deploy emits a correct absolute sitemap.
