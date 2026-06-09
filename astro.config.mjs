@@ -5,7 +5,6 @@ import { loadEnv } from "vite";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
-import cloudflare from "@astrojs/cloudflare";
 import sanity from "@sanity/astro";
 
 const loadedEnv = loadEnv(process.env.NODE_ENV ?? "development", process.cwd(), "");
@@ -18,7 +17,10 @@ const apiVersion = loadedEnv.PUBLIC_SANITY_API_VERSION ?? "2025-01-01";
 
 // https://astro.build/config
 export default defineConfig({
-  output: "server",
+  output: "static",
+  // Placeholder until the real *.workers.dev URL is known (Phase 7).
+  // @astrojs/sitemap needs `site` set to emit a sitemap.
+  site: "https://photo-portfolio.workers.dev",
   // react() must come before sanity() — the embedded Studio is a React app.
   integrations: [
     react(),
@@ -29,10 +31,12 @@ export default defineConfig({
       apiVersion,
       useCdn: true,
       studioBasePath: "/admin",
+      // Hash routing keeps the embedded Studio prerenderable on a static
+      // host (no server rewrites, no adapter) and avoids deep-link 404s.
+      studioRouterHistory: "hash",
     }),
   ],
   vite: {
     plugins: [tailwindcss()],
   },
-  adapter: cloudflare(),
 });

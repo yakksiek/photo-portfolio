@@ -6,7 +6,7 @@ This file provides guidance to AI agents working with code in this repository. T
 
 Scripts are in `@package.json` (`dev`, `build`, `preview`, `lint`, `lint:fix`, `format`). Two things you can't infer from the script names:
 
-- `npm run dev` / `npm run build` run on the **Cloudflare workerd runtime** (SSR via `@astrojs/cloudflare`).
+- `npm run build` produces a **static** `./dist` (no adapter, no SSR runtime). `npm run deploy` = `astro build && wrangler deploy` (Workers Static Assets); `npm run cf:tail` streams live logs.
 - `npm run format` applies `prettier-plugin-astro` + `prettier-plugin-tailwindcss` (Astro syntax + Tailwind class sorting).
 
 Pre-commit hooks (husky + lint-staged) are configured in `@package.json`.
@@ -17,7 +17,7 @@ Pre-commit hooks (husky + lint-staged) are configured in `@package.json`.
 
 ### Rendering mode
 
-Currently `output: "server"` in astro.config.mjs (inherited from the starter). The intended target is a **static public site** (content fetched from Sanity at build time, so the live site has no runtime dependency on the backend) with the Studio route client-rendered — the rendering split is a planned change, not yet applied.
+`output: "static"` in astro.config.mjs. The public site is a **static build** (content fetched from Sanity at build time, so the live site has no runtime dependency on the backend), and the embedded Studio at `/admin` is client-rendered via `studioRouterHistory: "hash"` — no adapter, no SSR. Served by **Cloudflare Workers Static Assets** (`wrangler` serves `./dist` directly; no `@astrojs/cloudflare` adapter).
 
 ### Content backend (Sanity)
 
@@ -47,11 +47,11 @@ There is **no hand-built auth** — Marcin logs into Sanity Studio (Sanity-manag
 - Sanity project: `photo-portfolio`, projectId `bp1ecwdp`, dataset `production`. These are **public, non-secret** coordinates baked in as defaults in `src/sanity/env.ts`, `astro.config.mjs`, and `sanity.cli.ts` — no `.env` required to run. Override via `PUBLIC_SANITY_PROJECT_ID` / `PUBLIC_SANITY_DATASET` / `PUBLIC_SANITY_API_VERSION` if ever needed.
 - `sanity.cli.ts` carries the same coordinates for CLI commands (`npx sanity dataset …`, `npx sanity cors …`, `npx sanity deploy`).
 - CORS: `http://localhost:4321` (Astro dev) is allowed. Add the Cloudflare production URL before deploying (`npx sanity cors add <url> --credentials`).
-- Deploy: Cloudflare Builds (build + deploy on push to `master`). No Sanity env vars needed there — the public coordinates are in code.
+- Deploy: Cloudflare Builds (build + deploy on push to `main`). No Sanity env vars needed there — the public coordinates are in code.
 
 ## CI
 
-GitHub Actions workflow (`.github/workflows/ci.yml`) runs **lint only** (ESLint) on every push and PR to master — build + deploy are handled by **Cloudflare Builds**, so the workflow no longer builds (avoids a redundant double-build). Husky pre-commit also runs `eslint --fix` on staged files locally.
+GitHub Actions workflow (`.github/workflows/ci.yml`) runs **lint only** (ESLint) on every push and PR to `main` — build + deploy are handled by **Cloudflare Builds**, so the workflow no longer builds (avoids a redundant double-build). Husky pre-commit also runs `eslint --fix` on staged files locally.
 
 ---
 

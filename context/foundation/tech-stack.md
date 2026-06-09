@@ -5,7 +5,7 @@ project_name: marcin-kulbicki
 hints:
   language_family: js
   team_size: solo
-  deployment_target: cloudflare-pages
+  deployment_target: cloudflare-workers
   ci_provider: cloudflare-builds
   ci_default_flow: auto-deploy-on-merge
   bootstrapper_confidence: first-class
@@ -34,9 +34,9 @@ in PostgreSQL, and serves photo uploads with on-the-fly responsive variants
 The existing React UI hydrates as Astro islands, keeping the public site fast
 while the cinematic modes stay interactive. Auth is the only feature flag set;
 payments, realtime, AI, and background jobs are out of scope per PRD non-goals.
-Deploys to Cloudflare Pages via Cloudflare Builds with auto-deploy on merge —
-the starter's native, lowest-friction path. Bootstrapper confidence is
-first-class.
+Deploys to Cloudflare Workers Static Assets via Cloudflare Builds with
+auto-deploy on merge to `main` — the starter's native, lowest-friction path.
+Bootstrapper confidence is first-class.
 
 ## Post-selection decision (2026-06-08)
 

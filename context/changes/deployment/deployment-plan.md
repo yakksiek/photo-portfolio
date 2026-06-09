@@ -23,41 +23,41 @@
 
 ---
 
-## Phase 1 — Static migration (code)  ☐
+## Phase 1 — Static migration (code)  ☑
 
 Convert the public site to a pure static build with no adapter.
 
-- ☐ **`astro.config.mjs`**
+- ☑ **`astro.config.mjs`**
   - `output: "server"` → `output: "static"`
   - Remove `import cloudflare from "@astrojs/cloudflare"` and the `adapter: cloudflare()` line.
   - Add `studioRouterHistory: "hash"` to the `sanity({ … })` integration (keeps Studio prerenderable, no adapter). Keep `react()` before `sanity()` (Studio is a React app).
-  - Add `site: "https://<worker-name>.<account>.workers.dev"` (placeholder now; finalize in Phase 7 once the real URL is known). `@astrojs/sitemap` needs `site` to emit a sitemap — it's currently silently producing nothing.
-- ☐ **`wrangler.jsonc`**
+  - Add `site: "https://<worker-name>.<account>.workers.dev"` (placeholder `https://photo-portfolio.workers.dev` now; finalize in Phase 7 once the real URL is known). `@astrojs/sitemap` needs `site` to emit a sitemap — it's currently silently producing nothing.
+- ☑ **`wrangler.jsonc`**
   - `name`: `10x-astro-starter` → `photo-portfolio` (this becomes the `*.workers.dev` subdomain).
   - Remove `"main": "@astrojs/cloudflare/entrypoints/server"` → assets-only Worker (no server code).
   - Remove `"compatibility_flags": ["nodejs_compat"]` (only needed for Worker runtime code; gone with the adapter — this is what closes the `nodejs_compat` 500 risk).
   - Keep `compatibility_date`, `assets` (`directory: "./dist"`, `not_found_handling: "404-page"`), `observability`.
   - Note: static build outputs to `dist/` root (not `dist/client` + `dist/server`); `directory: "./dist"` stays correct.
-- ☐ **`package.json`**
+- ☑ **`package.json`**
   - Remove `@astrojs/cloudflare` from dependencies (now unused). Keep `wrangler` (devDep) for deploy/rollback/tail.
   - Add scripts: `"deploy": "astro build && wrangler deploy"` and `"cf:tail": "wrangler tail"` for the manual/rollback loop.
-- ☐ Run `npm install` to drop the removed adapter from the lockfile.
+- ☑ Run `npm install` to drop the removed adapter from the lockfile. *(0 refs to `@astrojs/cloudflare` left in lockfile.)*
 
-## Phase 2 — Local verification  ☐
+## Phase 2 — Local verification  ☑
 
 Prove the static build + client-rendered Studio work before touching Cloudflare.
 
-- ☐ `npm run build` → confirm it emits static `dist/index.html` with portfolio data baked in, and a prerendered `/admin` shell. No adapter/SSR warnings.
-- ☐ `npm run preview` → load `/` (portfolio + scroll engine works) and `/admin` (Studio loads, hash routing `/admin#/…`, login prompt appears). **Edge case:** if the Studio 404s on a sub-path, confirm `studioRouterHistory: "hash"` is set — hash routing is what avoids deep-link 404s on a static host.
-- ☐ `npm run lint` stays green (CI gate).
+- ☑ `npm run build` → emits static `dist/index.html` (`data-portfolio` baked in) + prerendered `dist/admin/index.html`; no server/`_worker.js` output; sitemap created. No adapter/SSR warnings.
+- ☑ `npm run preview` → `/` (200, portfolio data) and `/admin` (200, Studio shell) both serve. *(Automated smoke test; visual scroll-engine interaction + Studio login prompt still need a human eyeball.)*
+- ☑ `npm run lint` stays green (CI gate).
 
-## Phase 3 — Branch & doc consistency  ☐
+## Phase 3 — Branch & doc consistency  ◑  *(code done; merge gate open)*
 
 Close the `master` mismatch (Risk: "Production branch mismatch").
 
-- ☐ **`.github/workflows/ci.yml`** — `branches: [master]` → `branches: [main]` in both `push` and `pull_request`.
-- ☐ **`CLAUDE.md`** — update the rendering-mode note ("output: server … planned change") to reflect static is now applied; change "Cloudflare Pages" → "Cloudflare Workers Static Assets"; change deploy-on-push branch `master` → `main`.
-- ☐ **`context/foundation/tech-stack.md`** — fix `deployment_target` / branch references (`cloudflare-pages` → `cloudflare-workers`; `master` → `main`).
+- ☑ **`.github/workflows/ci.yml`** — `branches: [master]` → `branches: [main]` in both `push` and `pull_request`.
+- ☑ **`CLAUDE.md`** — rendering-mode note now says static is applied (`studioRouterHistory: "hash"`); "Cloudflare Pages" → "Cloudflare Workers Static Assets"; deploy branch `master` → `main`; stale "workerd SSR" Commands note replaced with the static/deploy-script note.
+- ☑ **`context/foundation/tech-stack.md`** — `deployment_target: cloudflare-pages` → `cloudflare-workers`; prose "Cloudflare Pages … on merge" → "Workers Static Assets … on merge to `main`".
 - ☐ Merge `sanity-cms-portfolio` → `main` (production branch) once the above lands. *(Manual gate — user approves the merge.)*
 
 ## Phase 4 — Create the GitHub remote  ☐  *(prerequisite for Cloudflare Builds)*
