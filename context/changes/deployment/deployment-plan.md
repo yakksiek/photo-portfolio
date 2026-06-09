@@ -88,7 +88,7 @@ Make a Studio publish rebuild the live site.
 
 - ☑ **Custom domain (brought forward from "later"):** bought `marcinkulbicki.com` via Cloudflare Registrar; attached apex `marcinkulbicki.com` + `www.marcinkulbicki.com` as **Custom Domains** on the Worker (auto DNS + SSL). Both live over HTTPS (200, valid cert). `*.workers.dev` still works alongside.
 - ☑ **Finalize `site`:** `astro.config.mjs` `site:` set to the canonical apex `https://marcinkulbicki.com` → next deploy emits a correct absolute sitemap.
-- ☐ **Sanity CORS for the Studio origin:** `npx sanity cors add https://photo-portfolio.<account>.workers.dev --credentials`. *(Needed because the embedded Studio is a browser app hitting the Sanity API from the workers.dev origin. The public site itself fetches at build time and needs no runtime CORS.)*
+- ☑ **Sanity CORS for the Studio origins:** added `https://photo-portfolio.marcin-kulbicki.workers.dev`, `https://marcinkulbicki.com`, and `https://www.marcinkulbicki.com` (all `--credentials`). *(Needed because the embedded Studio is a browser app hitting the Sanity API from these origins. The public site fetches at build time and needs no runtime CORS.)*
 - ☐ **Rollback drill:** `wrangler deployments list`, then practice `wrangler rollback` so the revert path is known before it's needed (seconds to revert — static assets only).
 - ☐ **Account 2FA** (vendor-concentration mitigation) — confirm enabled.
 
