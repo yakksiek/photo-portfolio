@@ -136,5 +136,5 @@ The **mechanism and strength** of owner authentication (password / OAuth / passw
 
 ## Open Questions
 
-1. **How does the owner authenticate into the content-management surface?** — Owner undecided between a single-owner login, an access key/token, or no live auth at all (local/commit-based editing). Owner: Marcin + tech-stack step. Not blocking the product shape; resolve when the content-management approach is chosen.
+1. ~~**How does the owner authenticate into the content-management surface?**~~ **RESOLVED (2026-06-08):** the content backend is **Sanity** (headless CMS). The owner authenticates into **Sanity Studio** (Sanity-managed login) — no auth code is built in this project. The public site is read-only and fetches content via a public token. This supersedes the Supabase auth bundled in the `10x-astro-starter` scaffold.
 2. **Mobile-parity vs the delivery deadline (FR-009 ↔ FR-010 tension).** — FR-010 makes full mobile parity non-negotiable, while FR-009 carries an acknowledged release valve allowing a simpler mobile treatment of one view mode as a last resort. If the deadline forces the valve, which mode degrades and how far? Owner: Marcin, at build time.

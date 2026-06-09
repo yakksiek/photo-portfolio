@@ -1,0 +1,73 @@
+---
+export const prerender = true;
+
+import Layout from "@/layouts/Layout.astro";
+import { urlFor } from "@/sanity/client";
+import { getSections } from "@/sanity/queries";
+import { sectionNumber, type Photo } from "@/sanity/types";
+import "@/styles/portfolio.css";
+
+const cover = (p: Photo, w: number, h: number) => urlFor(p.image).width(w).height(h).fit("crop").auto("format").url();
+const contain = (p: Photo, w: number) => urlFor(p.image).width(w).auto("format").url();
+
+const slug = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const meta = (place?: string | null, year?: number | null): string => {
+  if (place && year) return `${place} · ${String(year)}`;
+  if (place) return place;
+  if (year) return String(year);
+  return "";
+};
+
+const sections = await getSections();
+
+const portfolioData = {
+  sections: sections.map((s) => {
+    const groups = (s.chapters ?? [])
+      .map((c) => {
+        const photos = c.photos ?? [];
+        const heroPhoto = photos[0];
+        if (!heroPhoto) return null;
+        return {
+          key: slug(c.title),
+          title: c.title,
+          meta: meta(c.place, c.year),
+          hero: { full: cover(heroPhoto, 2400, 1350), thumb: cover(heroPhoto, 1400, 788), alt: heroPhoto.alt },
+          frames: photos.slice(1).map((p) => ({
+            full: contain(p, 2000),
+            thumb: contain(p, 800),
+            alt: p.alt,
+          })),
+        };
+      })
+      .filter((g) => g !== null);
+
+    return {
+      key: slug(s.title),
+      n: sectionNumber(s),
+      title: s.title,
+      tagline: s.tagline ?? "",
+      tags: s.tags ?? [],
+      landing: s.landingHero?.image ? { src: cover(s.landingHero, 2000, 1400), alt: s.landingHero.alt } : null,
+      groups,
+    };
+  }),
+  contact: {
+    name: "Marcin Kulbicki",
+    email: "marcin.kulbicki@gmail.com",
+    location: "Switzerland · Poland",
+  },
+};
+---
+
+<Layout title="Marcin Kulbicki — Photography">
+  <div class="viewport theme-a" id="stageRoot" tabindex="-1" data-portfolio={JSON.stringify(portfolioData)}></div>
+  <script>
+    import { boot } from "@/scripts/portfolio";
+    boot();
+  </script>
+</Layout>
