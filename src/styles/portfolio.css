@@ -115,7 +115,10 @@ body {
   background: linear-gradient(rgba(0, 0, 0, 0.42), transparent);
   pointer-events: none;
 }
-.bar .brand {
+/* .mo-bar is the mobile menu-overlay's top bar; it shares the brand wordmark
+   styling so the open menu's logo aligns with the bar on every other screen. */
+.bar .brand,
+.mo-bar .brand {
   pointer-events: auto;
   cursor: pointer;
   font-weight: 700;
@@ -128,7 +131,8 @@ body {
   font-family: inherit;
   text-align: left;
 }
-.bar .brand small {
+.bar .brand small,
+.mo-bar .brand small {
   display: block;
   font-weight: 500;
   font-size: 0.62em;
@@ -179,6 +183,9 @@ body {
   display: none;
 }
 .menu-overlay {
+  display: none;
+}
+.section-dots {
   display: none;
 }
 
@@ -494,10 +501,10 @@ body {
   text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
 }
 
-/* contact band — minimal: name + email */
+/* contact band — minimal: eyebrow + email, full viewport height */
 .contact {
   position: relative;
-  min-height: 80svh; /* svh == vh on desktop; stable fill on mobile (bar pinned, no jump) */
+  min-height: 100svh; /* full height on desktop and mobile (svh == vh on desktop) */
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
@@ -515,13 +522,6 @@ body {
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--accent);
-}
-.contact .c-name {
-  font-weight: var(--display-weight);
-  letter-spacing: var(--display-track);
-  font-size: clamp(40px, 8vw, 116px);
-  line-height: 0.92;
-  text-transform: uppercase;
 }
 .contact .c-mail {
   font-size: clamp(15px, 1.7vw, 26px);
@@ -548,14 +548,6 @@ body {
 }
 .contact .c-mail:hover::after {
   transform: scaleX(1);
-}
-.contact .c-loc {
-  margin-top: clamp(2px, 0.6vh, 8px);
-  font-family: var(--mono);
-  font-size: clamp(9px, 0.78vw, 12px);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--muted);
 }
 
 /* ============================================================
@@ -1323,6 +1315,131 @@ body {
     letter-spacing: 0.08em;
     color: var(--faint);
     text-decoration: none;
+  }
+
+  /* ---- Phase 3: intro (mockup 02 resting) ---- */
+  /* The big centered hero-name animation (MARCIN KULBICKI / PHOTOGRAPHER) is
+     desktop-only (owner decision): on mobile, hide the name entirely and land
+     straight in the resting layout — section links pinned bottom-centre, cue
+     centred — regardless of the JS compact toggle. So the mockup-01 title
+     state never appears on phones. */
+  .intro .name {
+    display: none;
+  }
+  /* section links sit at the vertical centre; the scroll cue stays at the
+     bottom edge (its default position) */
+  .intro .role,
+  .intro .role.compact {
+    position: absolute;
+    left: clamp(20px, 6vw, 40px);
+    right: clamp(20px, 6vw, 40px);
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
+    margin-top: 0;
+    justify-content: center;
+    font-size: 11px;
+    letter-spacing: 0.34em;
+  }
+  .intro .role .role-pre {
+    display: none; /* no "Photographer —" lead-in on mobile */
+  }
+  .intro .role .role-links {
+    display: flex;
+    justify-content: center;
+  }
+  /* no hover/active affordance on touch: every section link reads white (the
+     default background-driven .active highlight is desktop-only) */
+  .intro .role .rolelink,
+  .intro .role .rolelink.active {
+    color: var(--fg);
+  }
+  .intro .role .rolelink.active::after {
+    display: none;
+  }
+  /* the scroll cue is the only accent on the intro */
+  .intro .cue {
+    font-size: 10px;
+    letter-spacing: 0.34em;
+    color: var(--accent);
+  }
+  .intro .cue::after {
+    background: var(--accent);
+  }
+
+  /* ---- Phase 3: section bands (mockup 04) ---- */
+  /* stack the label block bottom-left: number, big title, then the
+     chapters·frames + arrow caption. */
+  .band .label {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    left: clamp(20px, 6vw, 40px);
+    right: clamp(20px, 6vw, 40px);
+    bottom: clamp(26px, 5vh, 52px);
+  }
+  .band .label .num {
+    font-size: 12px;
+    margin-bottom: 0.4em;
+  }
+  .band .label .ttl {
+    font-size: clamp(44px, 15vw, 72px);
+    line-height: 0.9;
+  }
+  .band .view {
+    padding-bottom: 0;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+  }
+
+  /* section-position dots, right-centre (mockup 04). Fixed to the viewport so
+     they hold while the landing scrolls; painted within the landing's z:10
+     stacking context so the stage/overview cover them when active. */
+  .section-dots {
+    display: flex;
+    position: fixed;
+    top: 50%;
+    right: clamp(14px, 4vw, 22px);
+    transform: translateY(-50%);
+    flex-direction: column;
+    gap: 12px;
+    z-index: 12;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s var(--ease);
+  }
+  .section-dots.on {
+    opacity: 1;
+  }
+  .sd-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--faint);
+    transition:
+      background 0.3s var(--ease),
+      transform 0.3s var(--ease);
+  }
+  .sd-dot.on {
+    background: var(--accent);
+    transform: scale(1.2);
+  }
+
+  /* ---- Phase 3: contact (mockup 05) — minimal: eyebrow + email ---- */
+  .contact {
+    gap: clamp(16px, 2.6vh, 28px);
+    padding: clamp(24px, 8vw, 48px);
+  }
+  .contact .c-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.34em;
+  }
+  .contact .c-mail {
+    font-size: clamp(15px, 4.4vw, 19px);
+  }
+  /* no hover on touch — show the accent underline at rest */
+  .contact .c-mail::after {
+    transform: scaleX(1);
   }
 }
 

@@ -373,29 +373,29 @@ None — no schema or data changes. Pure front-end. Rollback is a code revert; F
 
 #### Automated
 
-- [x] 2.1 Lint passes: `npm run lint`
-- [x] 2.2 Build succeeds: `npm run build`
+- [x] 2.1 Lint passes: `npm run lint` — 877504d
+- [x] 2.2 Build succeeds: `npm run build` — 877504d
 
 #### Manual
 
-- [x] 2.3 Hamburger shows on mobile / inline nav hidden; desktop nav unchanged, no hamburger
-- [x] 2.4 Overlay matches `03` (Index, numbered sections, accented active, Contact, email footer)
-- [x] 2.5 Selecting an item navigates AND closes; Escape closes
-- [x] 2.6 At-rest wordmark is compact (matches `03`–`08`), not the oversized `02` logo
+- [x] 2.3 Hamburger shows on mobile / inline nav hidden; desktop nav unchanged, no hamburger — 877504d
+- [x] 2.4 Overlay matches `03` (Index, numbered sections, accented active, Contact, email footer) — 877504d
+- [x] 2.5 Selecting an item navigates AND closes; Escape closes — 877504d
+- [x] 2.6 At-rest wordmark is compact (matches `03`–`08`), not the oversized `02` logo — 877504d
 
 ### Phase 3: Landing mobile layout — intro, bands, contact
 
 #### Automated
 
-- [ ] 3.1 Lint passes: `npm run lint`
-- [ ] 3.2 Build succeeds: `npm run build`
+- [x] 3.1 Lint passes: `npm run lint`
+- [x] 3.2 Build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 3.3 Intro matches `01` (title) and `02` (resting)
-- [ ] 3.4 Bands full-bleed match `04`; section dots update as you swipe
-- [ ] 3.5 Contact matches `05`
-- [ ] 3.6 Desktop landing unchanged
+- [x] 3.3 Intro matches `01` (title) and `02` (resting) — owner override: hero animation desktop-only; mobile shows resting only (links centred, cue bottom + orange, no active highlight)
+- [x] 3.4 Bands full-bleed match `04`; section dots update as you swipe
+- [x] 3.5 Contact matches `05` — owner redesign: minimal (eyebrow + email), full-height, name/location removed (desktop too)
+- [x] 3.6 Desktop landing unchanged (except owner-requested contact redesign)
 
 ### Phase 4: Single mode mobile layout
 

@@ -64,6 +64,7 @@ export default function Portfolio({ data }: { data: PortfolioData }) {
     backgroundIndex,
     activeSectionKey,
     menuOpen,
+    landingIndex,
     toggleMenu,
     closeMenu,
     goTo,
@@ -277,14 +278,21 @@ export default function Portfolio({ data }: { data: PortfolioData }) {
           </div>
         ))}
 
-        {/* contact band — minimal: name + email */}
+        {/* contact band — minimal: eyebrow + email only */}
         <div className="contact">
           <span className="c-eyebrow">Contact</span>
-          <div className="c-name">{contact.name}</div>
           <a className="c-mail" href={"mailto:" + contact.email}>
             {contact.email}
           </a>
-          <div className="c-loc">{contact.location}</div>
+        </div>
+
+        {/* section-position dots (mockup 04) — mobile only, indicator of the
+            current band. `on` only while a band is the active landing target
+            (intro = index 0, contact = last); display:none on desktop. */}
+        <div className={cn("section-dots", landingIndex >= 1 && landingIndex <= sections.length && "on")}>
+          {sections.map((section, sectionIndex) => (
+            <span key={section.key} className={cn("sd-dot", landingIndex - 1 === sectionIndex && "on")} />
+          ))}
         </div>
       </div>
 

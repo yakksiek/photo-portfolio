@@ -70,6 +70,7 @@ export function usePortfolioEngine(data: PortfolioData) {
   const [overviewMounted, setOverviewMounted] = useState(false);
   const [backgroundIndex, setBackgroundIndex] = useState(defaultBackgroundIndex);
   const [menuOpen, setMenuOpen] = useState(false); // mobile menu overlay (S-04)
+  const [landingIndex, setLandingIndex] = useState(0); // reactive mirror of landingIndexRef for the mobile section-dots (S-04)
 
   // ---- refs (containers + mutable engine vars) ----
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -206,7 +207,10 @@ export function usePortfolioEngine(data: PortfolioData) {
       if (!landing) return;
       landing.scrollTop = target.offsetTop;
       const targetIndex = getLandingTargets().indexOf(target);
-      if (targetIndex >= 0) landingIndexRef.current = targetIndex;
+      if (targetIndex >= 0) {
+        landingIndexRef.current = targetIndex;
+        setLandingIndex(targetIndex);
+      }
     },
     [getLandingTargets],
   );
@@ -274,6 +278,7 @@ export function usePortfolioEngine(data: PortfolioData) {
         landingLockRef.current = false;
       }, LOCK_MS);
       landingIndexRef.current = nextIndex;
+      setLandingIndex(nextIndex);
       const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       landing.scrollTo({ top: target.offsetTop, behavior: prefersReducedMotion ? "auto" : "smooth" });
     },
@@ -459,6 +464,7 @@ export function usePortfolioEngine(data: PortfolioData) {
     const landing = landingRef.current;
     if (landing) landing.scrollTop = 0;
     landingIndexRef.current = 0; // back to intro; keep landing stepping in sync
+    setLandingIndex(0);
     playHeroName();
   }, [exit, playHeroName]);
 
@@ -559,6 +565,7 @@ export function usePortfolioEngine(data: PortfolioData) {
     backgroundIndex,
     activeSectionKey,
     menuOpen,
+    landingIndex,
     // handlers
     toggleMenu,
     closeMenu,
