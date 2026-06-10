@@ -1,10 +1,10 @@
 ---
 change_id: operational-safety-baseline
 title: Operational safety baseline — rehearsed rollback drill + account 2FA before prod changes
-status: implemented
+status: archived
 created: 2026-06-10
 updated: 2026-06-10
-archived_at: null
+archived_at: 2026-06-10T08:34:32Z
 ---
 
 ## Notes

@@ -43,7 +43,7 @@ guardrail) on **both** desktop and mobile — and today it is not, on mobile or 
 
 | ID    | Change ID                     | Outcome (user can …)                                              | Prerequisites | PRD refs                          | Status   |
 | ----- | ----------------------------- | ---------------------------------------------------------------- | ------------- | --------------------------------- | -------- |
-| F-01  | operational-safety-baseline   | (foundation) rehearsed rollback path + account 2FA before prod changes | —             | infra risk register               | ready    |
+| F-01  | operational-safety-baseline   | (foundation) rehearsed rollback path + account 2FA before prod changes | —             | infra risk register               | done     |
 | S-01  | landing-discrete-section-scroll | scroll the landing and advance one whole section per scroll-step (no free-scroll-then-snap) | —             | US-02, FR-008                     | ready    |
 | S-02  | desktop-fidelity-verification | trust the live desktop site renders pixel-faithfully to the reference, all content + both modes | —             | US-01, US-02, FR-001–004, FR-006–009 | ready    |
 | S-03  | performance-nfr-verification  | trust the live site meets its performance & resilience guardrails | —             | FR-005, FR-007, all NFRs          | ready    |
@@ -88,7 +88,7 @@ but mobile is effectively unbuilt and the landing scroll is broken (see Slices).
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Minimal scope on purpose — the rollback *command* already exists; this is the unrehearsed *drill* + 2FA from deployment Phase 7. Sequenced eagerly because the goal is `quality` and the site is already public; deferring safety infra behind user-facing fixes is exactly the anti-pattern a quality bias rejects.
-- **Status:** ready
+- **Status:** done
 
 ## Slices
 
@@ -176,4 +176,4 @@ but mobile is effectively unbuilt and the landing scroll is broken (see Slices).
 
 ## Done
 
-(Empty on first generation. `/10x-archive` appends here — and flips that item's `Status` to `done` — when a change whose `Change ID` matches a roadmap item is archived. Do NOT pre-populate.)
+- **F-01: (foundation) a rehearsed rollback path (`wrangler deployments list` / `wrangler rollback`) and account 2FA are confirmed, so changes can ship to the live brand-facing site with a known revert net** — Archived 2026-06-10 → `context/archive/2026-06-10-operational-safety-baseline/`. Lesson: —.
