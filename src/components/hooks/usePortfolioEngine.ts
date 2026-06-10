@@ -82,6 +82,11 @@ export function usePortfolioEngine(data: PortfolioData) {
   const touchYRef = useRef<number | null>(null);
   const nameTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // landing discrete-stepping (Phase 3): index into the ordered landing targets
+  // (.intro → each .band → .contact) and its own gesture lock.
+  const landingIdxRef = useRef(0);
+  const landingLockRef = useRef(false);
+
   // state mirrors so once-attached listeners read fresh values (vanilla closures)
   const idxRef = useRef(idx);
   const stageOnRef = useRef(stageOn);
@@ -170,15 +175,47 @@ export function usePortfolioEngine(data: PortfolioData) {
     [panels.length],
   );
 
-  const exit = useCallback((scrollToSelector?: string) => {
-    setStageOn(false);
-    setOverviewOn(false);
-    if (scrollToSelector) {
-      const landing = landingRef.current;
-      const t = landing?.querySelector<HTMLElement>(scrollToSelector);
-      if (landing && t) landing.scrollTop = t.offsetTop;
-    }
+  // Ordered landing targets, read fresh each call so offsets stay correct after
+  // a resize (.intro → each .band → .contact), mirroring the nav jump idiom.
+  const getLandingTargets = useCallback((): HTMLElement[] => {
+    const landing = landingRef.current;
+    if (!landing) return [];
+    const targets: HTMLElement[] = [];
+    const intro = landing.querySelector<HTMLElement>(".intro");
+    if (intro) targets.push(intro);
+    landing.querySelectorAll<HTMLElement>(".band").forEach((b) => {
+      targets.push(b);
+    });
+    const contact = landing.querySelector<HTMLElement>(".contact");
+    if (contact) targets.push(contact);
+    return targets;
   }, []);
+
+  // Instant landing jump (nav idiom) that also keeps landingIdx in sync, so a
+  // subsequent wheel/keyboard step continues from the right target.
+  const scrollLandingToEl = useCallback(
+    (t: HTMLElement) => {
+      const landing = landingRef.current;
+      if (!landing) return;
+      landing.scrollTop = t.offsetTop;
+      const ti = getLandingTargets().indexOf(t);
+      if (ti >= 0) landingIdxRef.current = ti;
+    },
+    [getLandingTargets],
+  );
+
+  const exit = useCallback(
+    (scrollToSelector?: string) => {
+      setStageOn(false);
+      setOverviewOn(false);
+      if (scrollToSelector) {
+        const landing = landingRef.current;
+        const t = landing?.querySelector<HTMLElement>(scrollToSelector);
+        if (t) scrollLandingToEl(t);
+      }
+    },
+    [scrollLandingToEl],
+  );
 
   const enter = useCallback(
     (si: number) => {
@@ -208,6 +245,49 @@ export function usePortfolioEngine(data: PortfolioData) {
     },
     [SECTIONS.length],
   );
+
+  // ---- landing discrete stepping (Phase 3, S-01) ----
+  // Advance exactly one whole landing target per step, mirroring the stage's
+  // step/lock pattern. Clamped at both ends; the lock collapses a single wheel
+  // gesture into one step and prevents `mandatory` snap from fighting the
+  // in-flight smooth scroll. Touch is NOT handled here (native; S-04 owns it).
+  const landingStep = useCallback(
+    (d: number) => {
+      if (landingLockRef.current) return;
+      const landing = landingRef.current;
+      if (!landing) return;
+      const targets = getLandingTargets();
+      if (!targets.length) return;
+      const next = landingIdxRef.current + d;
+      if (next < 0 || next >= targets.length) return; // clamp: no-op at the ends
+      const target = targets[next];
+      if (!target) return;
+      landingLockRef.current = true;
+      setTimeout(() => {
+        landingLockRef.current = false;
+      }, LOCK_MS);
+      landingIdxRef.current = next;
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      landing.scrollTo({ top: target.offsetTop, behavior: reduce ? "auto" : "smooth" });
+    },
+    [getLandingTargets],
+  );
+
+  // wheel listener on the landing (attach once; read fresh state via refs)
+  useEffect(() => {
+    const landing = landingRef.current;
+    if (!landing) return;
+    const onLandingWheel = (e: WheelEvent) => {
+      if (stageOnRef.current || overviewOnRef.current) return; // landing not the visible surface
+      e.preventDefault();
+      if (Math.abs(e.deltaY) < WHEEL_DEADZONE) return;
+      landingStep(e.deltaY > 0 ? 1 : -1);
+    };
+    landing.addEventListener("wheel", onLandingWheel, { passive: false });
+    return () => {
+      landing.removeEventListener("wheel", onLandingWheel);
+    };
+  }, [landingStep]);
 
   // ---- stage scroll-hijack (portfolio.ts:624–658) ----
   const armLock = useCallback(() => {
@@ -287,11 +367,22 @@ export function usePortfolioEngine(data: PortfolioData) {
           setOverviewOn(false);
           const landing = landingRef.current;
           const t = landing?.querySelector<HTMLElement>('.band[data-section="' + String(overviewSiRef.current) + '"]');
-          if (landing && t) landing.scrollTop = t.offsetTop;
+          if (t) scrollLandingToEl(t);
         }
         return;
       }
-      if (!stageOnRef.current) return;
+      if (!stageOnRef.current) {
+        // landing is the visible surface — discrete step (coordinated so the two
+        // engines never both fire). Space → +1, like the stage.
+        if (e.key === "ArrowDown" || e.key === " " || e.key === "PageDown") {
+          e.preventDefault();
+          landingStep(1);
+        } else if (e.key === "ArrowUp" || e.key === "PageUp") {
+          e.preventDefault();
+          landingStep(-1);
+        }
+        return;
+      }
       if (e.key === "ArrowDown" || e.key === " " || e.key === "PageDown") {
         e.preventDefault();
         step(1);
@@ -307,13 +398,14 @@ export function usePortfolioEngine(data: PortfolioData) {
     return () => {
       document.removeEventListener("keydown", onKey);
     };
-  }, [step, panels, exit]);
+  }, [step, panels, exit, scrollLandingToEl, landingStep]);
 
   // ---- composed nav handlers (read fresh refs) ----
   const onBrandIndex = useCallback(() => {
     exit();
     const landing = landingRef.current;
     if (landing) landing.scrollTop = 0;
+    landingIdxRef.current = 0; // back to intro; keep landing stepping in sync
     playHeroName();
   }, [exit, playHeroName]);
 
@@ -348,8 +440,8 @@ export function usePortfolioEngine(data: PortfolioData) {
     setOverviewOn(false);
     const landing = landingRef.current;
     const t = landing?.querySelector<HTMLElement>('.band[data-section="' + String(overviewSiRef.current) + '"]');
-    if (landing && t) landing.scrollTop = t.offsetTop;
-  }, []);
+    if (t) scrollLandingToEl(t);
+  }, [scrollLandingToEl]);
 
   const onOvPrev = useCallback(() => {
     if (overviewSiRef.current > 0) showOverview(overviewSiRef.current - 1);

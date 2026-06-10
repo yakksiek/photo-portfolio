@@ -274,31 +274,31 @@ No new perf budget concerns: the island is `client:only`, matching today's clien
 
 #### Automated
 
-- [x] 2.1 Linting passes: `npm run lint`
-- [x] 2.2 Type checking passes: `npx astro check`
-- [x] 2.3 Production build succeeds: `npm run build`
-- [x] 2.4 No references to the deleted script remain: `grep -rn "scripts/portfolio" src` is empty
+- [x] 2.1 Linting passes: `npm run lint` — 433059b
+- [x] 2.2 Type checking passes: `npx astro check` — 433059b
+- [x] 2.3 Production build succeeds: `npm run build` — 433059b
+- [x] 2.4 No references to the deleted script remain: `grep -rn "scripts/portfolio" src` is empty — 433059b
 
 #### Manual
 
-- [x] 2.5 Stage scroll-hijack works (wheel/Arrow/Page/Space one-panel step + lock; Escape/back returns to landing band)
-- [x] 2.6 Nav parity (brand/Index reset + hero replay; section enter / overview switch; Contact scroll)
-- [x] 2.7 Single/All toggle, overview grid, prev/next arrows, rail + dots, click-to-frame behave as today
-- [x] 2.8 Hero-name collapse (~1.5s — owner-tweaked from 2s) and intro-bg hover crossfade as today
-- [x] 2.9 No regressions vs current site across landing, Single, All
+- [x] 2.5 Stage scroll-hijack works (wheel/Arrow/Page/Space one-panel step + lock; Escape/back returns to landing band) — 433059b
+- [x] 2.6 Nav parity (brand/Index reset + hero replay; section enter / overview switch; Contact scroll) — 433059b
+- [x] 2.7 Single/All toggle, overview grid, prev/next arrows, rail + dots, click-to-frame behave as today — 433059b
+- [x] 2.8 Hero-name collapse (~1.5s — owner-tweaked from 2s) and intro-bg hover crossfade as today — 433059b
+- [x] 2.9 No regressions vs current site across landing, Single, All — 433059b
 
 ### Phase 3: Discrete landing stepping (the S-01 feature)
 
 #### Automated
 
-- [ ] 3.1 Linting passes: `npm run lint`
-- [ ] 3.2 Type checking passes: `npx astro check`
-- [ ] 3.3 Production build succeeds: `npm run build`
+- [x] 3.1 Linting passes: `npm run lint`
+- [x] 3.2 Type checking passes: `npx astro check`
+- [x] 3.3 Production build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 3.4 One wheel-notch = exactly one landing target, no free-scroll drift; fast flick still advances one (lock)
-- [ ] 3.5 Arrow/Page/Space step one target at a time, clamped at intro (up) and contact (down)
-- [ ] 3.6 Side-by-side vs reference HTML: landing stepping feel matches
-- [ ] 3.7 Reduced-motion: landing steps jump instantly, still one target
-- [ ] 3.8 Native touch scroll on landing still works; Phase-2 stage/overview behaviors unregressed
+- [x] 3.4 One wheel-notch = exactly one landing target, no free-scroll drift; fast flick still advances one (lock)
+- [x] 3.5 Arrow/Page/Space step one target at a time, clamped at intro (up) and contact (down)
+- [x] 3.6 Side-by-side vs reference HTML: landing stepping feel matches
+- [x] 3.7 Reduced-motion: landing steps jump instantly, still one target
+- [x] 3.8 Native touch scroll on landing still works; Phase-2 stage/overview behaviors unregressed
