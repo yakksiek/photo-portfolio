@@ -12,7 +12,7 @@ The scroll engine is already a React island — `src/components/Portfolio.tsx` (
 
 **Why mobile is effectively unbuilt (code presence ≠ working behavior):**
 
-- **Landing has no touch handler.** The landing drives discrete one-section-per-step scrolling via a `wheel` listener that `preventDefault`s and calls `landingStep` (`usePortfolioEngine.ts:279-292`). Touch was explicitly deferred: *"Touch is NOT handled here (native; S-04 owns it)"* (`usePortfolioEngine.ts:255`). With `.landing { overflow-y:auto; scroll-snap-type:y mandatory }` (`portfolio.css:178-183`) and nothing driving touch, native swipe + mandatory snap fight each other — **this is the "scroll breaks the app on mobile" symptom.** (The stage, by contrast, already has working touch handlers at `usePortfolioEngine.ts:334-355`.)
+- **Landing has no touch handler.** The landing drives discrete one-section-per-step scrolling via a `wheel` listener that `preventDefault`s and calls `landingStep` (`usePortfolioEngine.ts:279-292`). Touch was explicitly deferred: _"Touch is NOT handled here (native; S-04 owns it)"_ (`usePortfolioEngine.ts:255`). With `.landing { overflow-y:auto; scroll-snap-type:y mandatory }` (`portfolio.css:178-183`) and nothing driving touch, native swipe + mandatory snap fight each other — **this is the "scroll breaks the app on mobile" symptom.** (The stage, by contrast, already has working touch handlers at `usePortfolioEngine.ts:334-355`.)
 - **There is essentially no mobile CSS.** The single width media query (`portfolio.css:1167-1183`) only reflows the overview to a column. Everything else is desktop-first fluid `clamp()`. The reference build itself never had a mobile design — so the owner's mockups are a **new design to build to**, not a port.
 - **Full-screen surfaces use `100vh`** (`.intro`, `.band`, `.contact`, `.stage`), which jumps as mobile browser address bars show/hide.
 - **The viewport meta is incomplete:** `Layout.astro:14` is `width=device-width` with no `initial-scale=1`.
@@ -358,30 +358,30 @@ None — no schema or data changes. Pure front-end. Rollback is a code revert; F
 
 #### Automated
 
-- [x] 1.1 Lint passes: `npm run lint`
-- [x] 1.2 Format check clean: `npm run format` (no diff)
-- [x] 1.3 Build succeeds: `npm run build`
+- [x] 1.1 Lint passes: `npm run lint` — 2aadc8a
+- [x] 1.2 Format check clean: `npm run format` (no diff) — 2aadc8a
+- [x] 1.3 Build succeeds: `npm run build` — 2aadc8a
 
 #### Manual
 
-- [x] 1.4 Landing browses section-by-section with no breakage (discrete-step primary, or native-scroll-snap fallback)
-- [x] 1.5 Intro/bands/contact fill the screen with no address-bar gap; no jump on scroll
-- [x] 1.6 Desktop wheel/keyboard landing stepping unchanged
-- [x] 1.7 Reduced-motion: landing touch stepping jumps instantly
+- [x] 1.4 Landing browses section-by-section with no breakage (discrete-step primary, or native-scroll-snap fallback) — 2aadc8a
+- [x] 1.5 Intro/bands/contact fill the screen with no address-bar gap; no jump on scroll — 2aadc8a
+- [x] 1.6 Desktop wheel/keyboard landing stepping unchanged — 2aadc8a
+- [x] 1.7 Reduced-motion: landing touch stepping jumps instantly — 2aadc8a
 
 ### Phase 2: Mobile chrome — hamburger menu overlay
 
 #### Automated
 
-- [ ] 2.1 Lint passes: `npm run lint`
-- [ ] 2.2 Build succeeds: `npm run build`
+- [x] 2.1 Lint passes: `npm run lint`
+- [x] 2.2 Build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 2.3 Hamburger shows on mobile / inline nav hidden; desktop nav unchanged, no hamburger
-- [ ] 2.4 Overlay matches `03` (Index, numbered sections, accented active, Contact, email footer)
-- [ ] 2.5 Selecting an item navigates AND closes; Escape closes
-- [ ] 2.6 At-rest wordmark is compact (matches `03`–`08`), not the oversized `02` logo
+- [x] 2.3 Hamburger shows on mobile / inline nav hidden; desktop nav unchanged, no hamburger
+- [x] 2.4 Overlay matches `03` (Index, numbered sections, accented active, Contact, email footer)
+- [x] 2.5 Selecting an item navigates AND closes; Escape closes
+- [x] 2.6 At-rest wordmark is compact (matches `03`–`08`), not the oversized `02` logo
 
 ### Phase 3: Landing mobile layout — intro, bands, contact
 

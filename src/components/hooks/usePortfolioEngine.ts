@@ -69,6 +69,7 @@ export function usePortfolioEngine(data: PortfolioData) {
   const [overviewSectionIndex, setOverviewSectionIndex] = useState(0);
   const [overviewMounted, setOverviewMounted] = useState(false);
   const [backgroundIndex, setBackgroundIndex] = useState(defaultBackgroundIndex);
+  const [menuOpen, setMenuOpen] = useState(false); // mobile menu overlay (S-04)
 
   // ---- refs (containers + mutable engine vars) ----
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -94,6 +95,7 @@ export function usePortfolioEngine(data: PortfolioData) {
   const stageOnRef = useRef(stageOn);
   const overviewOnRef = useRef(overviewOn);
   const overviewSectionIndexRef = useRef(overviewSectionIndex);
+  const menuOpenRef = useRef(menuOpen);
   useEffect(() => {
     panelIndexRef.current = panelIndex;
   }, [panelIndex]);
@@ -106,6 +108,9 @@ export function usePortfolioEngine(data: PortfolioData) {
   useEffect(() => {
     overviewSectionIndexRef.current = overviewSectionIndex;
   }, [overviewSectionIndex]);
+  useEffect(() => {
+    menuOpenRef.current = menuOpen;
+  }, [menuOpen]);
 
   // ---- track transform + transition-suppression reflow trick (portfolio.ts:436–440) ----
   useLayoutEffect(() => {
@@ -403,6 +408,11 @@ export function usePortfolioEngine(data: PortfolioData) {
   // keyboard (portfolio.ts:689–710)
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
+      if (menuOpenRef.current) {
+        // mobile menu overlay is modal — Escape closes it; swallow other keys.
+        if (event.key === "Escape") setMenuOpen(false);
+        return;
+      }
       if (overviewOnRef.current) {
         if (event.key === "Escape") {
           setOverviewOn(false);
@@ -455,6 +465,15 @@ export function usePortfolioEngine(data: PortfolioData) {
   const onContact = useCallback(() => {
     exit(".contact");
   }, [exit]);
+
+  // ---- mobile menu overlay (S-04) ----
+  const toggleMenu = useCallback(() => {
+    setMenuOpen((open) => !open);
+  }, []);
+
+  const closeMenu = useCallback(() => {
+    setMenuOpen(false);
+  }, []);
 
   const onBack = useCallback(() => {
     const currentPanel = panels[panelIndexRef.current];
@@ -539,7 +558,10 @@ export function usePortfolioEngine(data: PortfolioData) {
     overviewMounted,
     backgroundIndex,
     activeSectionKey,
+    menuOpen,
     // handlers
+    toggleMenu,
+    closeMenu,
     goTo,
     enter,
     openSingleAt,

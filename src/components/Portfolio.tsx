@@ -63,6 +63,9 @@ export default function Portfolio({ data }: { data: PortfolioData }) {
     overviewMounted,
     backgroundIndex,
     activeSectionKey,
+    menuOpen,
+    toggleMenu,
+    closeMenu,
     goTo,
     enter,
     openSingleAt,
@@ -123,6 +126,69 @@ export default function Portfolio({ data }: { data: PortfolioData }) {
           ))}
           <button onClick={onContact}>Contact</button>
         </div>
+        {/* hamburger — mobile only (CSS-gated); opens the full-screen overlay */}
+        <button className="menu-toggle" aria-label="Open menu" aria-expanded={menuOpen} onClick={toggleMenu}>
+          <span />
+          <span />
+          <span />
+        </button>
+      </div>
+
+      {/* ---- mobile menu overlay (mockup 03) — display:none above the breakpoint ---- */}
+      <div className={cn("menu-overlay", menuOpen && "open")}>
+        <div className="mo-bar">
+          <button
+            className="brand"
+            onClick={() => {
+              onBrandIndex();
+              closeMenu();
+            }}
+          >
+            MARCIN KULBICKI<small>Photography</small>
+          </button>
+          <button className="menu-close" aria-label="Close menu" onClick={closeMenu}>
+            <span />
+            <span />
+          </button>
+        </div>
+        <nav className="mo-list">
+          <button
+            className="mo-item"
+            onClick={() => {
+              onBrandIndex();
+              closeMenu();
+            }}
+          >
+            <span className="mo-num">{"–"}</span>
+            <span className="mo-label">Index</span>
+          </button>
+          {sections.map((section, sectionIndex) => (
+            <button
+              key={section.key}
+              className={cn("mo-item", activeSectionKey === section.key && "active")}
+              onClick={() => {
+                onSectionNav(sectionIndex);
+                closeMenu();
+              }}
+            >
+              <span className="mo-num">{section.number}</span>
+              <span className="mo-label">{section.title}</span>
+            </button>
+          ))}
+          <button
+            className="mo-item"
+            onClick={() => {
+              onContact();
+              closeMenu();
+            }}
+          >
+            <span className="mo-num">{"·"}</span>
+            <span className="mo-label">Contact</span>
+          </button>
+        </nav>
+        <a className="mo-mail" href={"mailto:" + contact.email}>
+          {contact.email}
+        </a>
       </div>
 
       {/* ---- landing ---- */}

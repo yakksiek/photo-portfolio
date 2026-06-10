@@ -172,6 +172,16 @@ body {
   background: currentColor;
 }
 
+/* ----- mobile menu chrome (hamburger + overlay) -------------------- */
+/* Both render in the DOM at all sizes but are hidden on desktop; the
+   ≤768px block flips them on and hides the inline .menu (S-04). */
+.menu-toggle {
+  display: none;
+}
+.menu-overlay {
+  display: none;
+}
+
 /* ============================================================
    LANDING — stacked full-bleed bands
    ============================================================ */
@@ -1191,6 +1201,128 @@ body {
      in-flight smooth scrollTo. */
   .landing {
     scroll-snap-type: none;
+  }
+
+  /* ---- Phase 2: chrome — hamburger + full-screen menu overlay (mockup 03) ---- */
+  /* hide the inline desktop nav; show the hamburger */
+  .menu {
+    display: none;
+  }
+  .menu-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 26px;
+    height: 16px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  .menu-toggle span {
+    display: block;
+    width: 100%;
+    height: 1.5px;
+    background: var(--fg);
+  }
+
+  /* full-screen overlay (mockup 03): vertical numbered list + email footer.
+     z-index sits above grain (40) / vignette (38) / bar (30) so it fully covers
+     every surface; its own .mo-bar restates the wordmark + a close affordance. */
+  .menu-overlay.open {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(20px, 8vh, 72px) clamp(22px, 6vw, 40px);
+    background: var(--bg);
+    color: var(--fg);
+  }
+  .mo-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: clamp(16px, 2.6vh, 32px) clamp(20px, 6vw, 40px);
+  }
+  .menu-close {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  .menu-close span {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    background: var(--fg);
+  }
+  .menu-close span:nth-child(1) {
+    transform: rotate(45deg);
+  }
+  .menu-close span:nth-child(2) {
+    transform: rotate(-45deg);
+  }
+  .mo-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .mo-item {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    width: 100%;
+    padding: clamp(11px, 1.9vh, 18px) 0;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    color: var(--fg);
+  }
+  .mo-item:first-child {
+    border-top: 1px solid var(--line);
+  }
+  .mo-num {
+    flex: none;
+    min-width: 1.6em;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+  .mo-label {
+    font-weight: var(--display-weight);
+    font-size: clamp(26px, 8vw, 40px);
+    letter-spacing: var(--display-track);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .mo-item.active .mo-label {
+    color: var(--accent);
+  }
+  .mo-mail {
+    position: absolute;
+    left: clamp(22px, 6vw, 40px);
+    bottom: clamp(24px, 5vh, 48px);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--faint);
+    text-decoration: none;
   }
 }
 
