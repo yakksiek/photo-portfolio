@@ -36,8 +36,11 @@ guardrail) on **both** desktop and mobile — and today it is not, on mobile or 
 
 > *North star* here means the smallest end-to-end slice whose successful delivery would prove the
 > core product promise — placed as early as its prerequisites allow because everything else only
-> matters if this works. It is currently **blocked** (see Status): it waits on owner-supplied mobile
-> layouts and the scroll-engine architecture decision (Open Roadmap Questions 2–3).
+> matters if this works. It is now **ready** and the active priority: the owner has delivered the
+> mobile layouts (2026-06-10) and the engine is already a React island (migrated in S-01), so both
+> former gates are cleared. The one remaining open question — which view mode degrades if full parity
+> can't hold (FR-009 release valve) — is a `/10x-plan`-time decision, not a blocker. Performance
+> verification (S-03) is now sequenced *after* mobile (owner's call: build mobile, then measure).
 
 ## At a glance
 
@@ -46,8 +49,8 @@ guardrail) on **both** desktop and mobile — and today it is not, on mobile or 
 | F-01  | operational-safety-baseline   | (foundation) rehearsed rollback path + account 2FA before prod changes | —             | infra risk register               | done     |
 | S-01  | landing-discrete-section-scroll | scroll the landing and advance one whole section per scroll-step (no free-scroll-then-snap) | —             | US-02, FR-008                     | ready    |
 | S-02  | desktop-fidelity-verification | trust the live desktop site renders pixel-faithfully to the reference, all content + both modes | —             | US-01, US-02, FR-001–004, FR-006–009 | done     |
+| S-04  | mobile-parity-rework          | browse the full site on mobile — both modes, touch, faithful layout | —             | US-02, FR-008, FR-009, FR-010     | ready    |
 | S-03  | performance-nfr-verification  | trust the live site meets its performance & resilience guardrails | —             | FR-005, FR-007, all NFRs          | ready    |
-| S-04  | mobile-parity-rework          | browse the full site on mobile — both modes, touch, faithful layout | —             | US-02, FR-008, FR-009, FR-010     | blocked  |
 
 ## Streams
 
@@ -55,8 +58,8 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 
 | Stream | Theme                       | Chain               | Note                                                                                  |
 | ------ | --------------------------- | ------------------- | ------------------------------------------------------------------------------------- |
-| A      | Scroll fidelity & mobile    | `S-01` → `S-04`     | The hijacked-scroll work: fix landing stepping on desktop, then carry both modes to mobile (north star, blocked). |
-| B      | Guardrail verification      | `S-02` / `S-03`     | The "manual check everything" pass; both `ready`, run in parallel; no foundation prereq. |
+| A      | Scroll fidelity & mobile    | `S-01` → `S-04`     | The hijacked-scroll work: landing stepping fixed on desktop (S-01 done), now carry both modes to mobile (north star, `ready` — layouts delivered, engine already React). |
+| B      | Guardrail verification      | `S-02` / `S-03`     | The "manual check everything" pass; S-02 done; S-03 `ready` but now sequenced *after* S-04 (mobile first, then measure perf). |
 | C      | Operational safety          | `F-01`              | Standalone safety baseline; de-risks shipping the bigger changes (`S-04`) to the live brand-facing site. |
 
 ## Baseline
@@ -66,7 +69,7 @@ Foundations below assume these are present and do NOT re-scaffold them. **The ow
 matters: code presence ≠ working behavior** — responsive CSS and touch handlers exist in source,
 but mobile is effectively unbuilt and the landing scroll is broken (see Slices).
 
-- **Frontend:** present — Astro page + ported hijacked-scroll engine (`src/scripts/portfolio.ts`), wired to CMS data via a `data-portfolio` attribute (`src/pages/index.astro:68`), **vanilla JS, not a React island** (owner flagged this against the CLAUDE.md convention — see ORQ 3).
+- **Frontend:** present — Astro page + hijacked-scroll engine, now a **React island** (`src/components/Portfolio.tsx` + `src/components/hooks/usePortfolioEngine.ts`), wired to CMS data from a build-time Sanity fetch (`src/pages/index.astro`). Migrated from the original vanilla `src/scripts/portfolio.ts` in S-01 (ORQ 3 resolved).
 - **Backend / API:** present (n/a) — no server; static build, Sanity is the content API.
 - **Data:** present — Sanity schema `section`/`chapter`/`photo` complete (all of FR-001–006); GROQ `siteQuery` fetches the full tree at build time (`src/sanity/queries.ts:6`); section numbering + cover/contain fit rules applied (`src/sanity/types.ts:33`, `src/pages/index.astro:10`). FR-007 image variants via `urlFor()`.
 - **Auth:** present (per `tech-stack.md`) — Sanity Studio login (Sanity-managed); no hand-built auth. Resolves PRD Open Question 1.
@@ -137,14 +140,14 @@ but mobile is effectively unbuilt and the landing scroll is broken (see Slices).
 - **Change ID:** mobile-parity-rework
 - **PRD refs:** US-02 (explore a section, on mobile), FR-008 (landing + mobile backdrop equivalent), FR-009 (both modes), FR-010 (touch navigation + full desktop features on mobile), Guardrail (mobile parity is first-class, not a reduced experience), PRD Open Question 2
 - **Prerequisites:** —
-- **Parallel with:** S-02, S-03 (independent; but blocked)
-- **Blockers:** Owner-supplied mobile layouts — pending delivery ("I will provide the layouts in due time").
+- **Parallel with:** S-03 (independent)
+- **Blockers:** — (owner delivered the mobile layouts/screens, 2026-06-10, at `context/foundation/design-reference/mobile/`; see `context/changes/mobile-parity-rework/change.md`).
 - **Unknowns:**
-  - **Mobile-parity vs the FR-009 release valve (PRD Open Question 2):** the *release valve* is FR-009's acknowledged permission to ship a simpler mobile treatment of one view mode as a last resort, if full parity can't be reached in time. Are BOTH modes achievable on mobile, or does one degrade — and if so, which one and how far? — Owner: Marcin. Block: yes.
-  - **Scroll-engine architecture (ORQ 3):** re-express the engine as a React island per the CLAUDE.md convention, or keep vanilla JS and fix touch behavior in place? The choice shapes the entire mobile plan. — Owner: Marcin. Block: yes.
+  - **Mobile-parity vs the FR-009 release valve (PRD Open Question 2):** the *release valve* is FR-009's acknowledged permission to ship a simpler mobile treatment of one view mode as a last resort, if full parity can't be reached in time. Are BOTH modes achievable on mobile, or does one degrade — and if so, which one and how far? — Owner: Marcin. Block: no (a `/10x-plan`-time decision per the PRD: "Owner: Marcin, at build time").
+  - **Scroll-engine architecture (ORQ 3): RESOLVED (2026-06-10)** — the engine was migrated to a React island in S-01 (`src/components/Portfolio.tsx` + `src/components/hooks/usePortfolioEngine.ts`); the vanilla `src/scripts/portfolio.ts` no longer exists. Mobile work builds on the React island.
   - Why does scroll currently break the app on mobile (touch-gesture handling vs viewport math)? — Owner: Marcin/TBD at plan time. Block: no (a diagnosis for `/10x-plan`, not a roadmap gate).
-- **Risk:** The project's stated #1 risk: the cinematic hijacked-scroll and both view modes working faithfully on mobile (touch gestures, viewport math) is the largest unknown. Blocked until the owner delivers layouts and resolves the parity + engine decisions — sequencing it as the north star surfaces those gates rather than letting them slip into implementation. Ship behind F-01's rollback net given it mutates the live brand-facing site.
-- **Status:** blocked
+- **Risk:** The project's stated #1 risk: the cinematic hijacked-scroll and both view modes working faithfully on mobile (touch gestures, viewport math) is the largest unknown. Both former gates (owner layouts, engine architecture) are now cleared, so it is `ready`; the parity-vs-release-valve call is made at plan time. Ship behind F-01's rollback net given it mutates the live brand-facing site.
+- **Status:** ready
 
 ## Backlog Handoff
 
@@ -153,14 +156,14 @@ but mobile is effectively unbuilt and the landing scroll is broken (see Slices).
 | F-01       | operational-safety-baseline     | Rehearse rollback drill + confirm account 2FA          | yes                   | Quick safety task; run alongside S-01–S-03 |
 | S-01       | landing-discrete-section-scroll | Fix landing scroll to discrete one-section stepping    | yes                   | Run `/10x-plan landing-discrete-section-scroll` — recommended first |
 | S-02       | desktop-fidelity-verification   | Verify live desktop site is pixel-faithful to reference | yes                   | Manual-check pass; parallel with S-03 |
-| S-03       | performance-nfr-verification    | Verify performance & resilience NFRs on the live site  | yes                   | Lighthouse/LCP/CLS + reduced-motion; parallel with S-02 |
-| S-04       | mobile-parity-rework            | Build the mobile experience (both modes, touch, parity) | no                    | Blocked: owner layouts pending + ORQ 2 & 3 unresolved |
+| S-04       | mobile-parity-rework            | Build the mobile experience (both modes, touch, parity) | yes                   | Layouts delivered; engine already React (ORQ 3 resolved). Release-valve call (ORQ 1) decided at plan time. **Recommended next.** |
+| S-03       | performance-nfr-verification    | Verify performance & resilience NFRs on the live site  | yes                   | Lighthouse/LCP/CLS + reduced-motion. Sequenced *after* S-04 — measure perf once mobile is built. |
 
 ## Open Roadmap Questions
 
-1. **Mobile-parity vs the FR-009 release valve (PRD Open Question 2, still open).** — FR-010 makes full mobile parity non-negotiable; FR-009 carries an acknowledged *release valve* (a permitted last-resort simplification of one view mode on mobile, to protect delivery). If parity can't hold, which mode degrades and how far? Owner: Marcin. Block: S-04.
-2. **Owner-supplied mobile layouts are pending delivery.** — The mobile rework (S-04) cannot be planned faithfully until the owner provides the intended mobile layouts. Owner: Marcin. Block: S-04.
-3. **Scroll-engine architecture: React island vs vanilla JS.** — The ported engine is vanilla JS (`src/scripts/portfolio.ts`); the CLAUDE.md convention says the scroll engine should live as an interactive React island. Decide whether to migrate the engine to React (which would then become a Foundation feeding S-04) or keep vanilla JS and fix touch behavior in place. Owner: Marcin. Block: S-04 (and informs S-01's approach).
+1. **Mobile-parity vs the FR-009 release valve (PRD Open Question 2).** — FR-010 makes full mobile parity non-negotiable; FR-009 carries an acknowledged *release valve* (a permitted last-resort simplification of one view mode on mobile, to protect delivery). If parity can't hold, which mode degrades and how far? **No longer a roadmap blocker** — resolved at `/10x-plan` time per the PRD ("Owner: Marcin, at build time"). Owner: Marcin.
+2. ~~**Owner-supplied mobile layouts are pending delivery.**~~ **RESOLVED (2026-06-10):** the owner delivered the mobile layouts/screens, so S-04 can now be planned.
+3. ~~**Scroll-engine architecture: React island vs vanilla JS.**~~ **RESOLVED (2026-06-10):** the engine was migrated to a React island in S-01 (`src/components/Portfolio.tsx` + `src/components/hooks/usePortfolioEngine.ts`); the vanilla `src/scripts/portfolio.ts` no longer exists. Mobile work (S-04) builds on the React island.
 
 ## Parked
 
