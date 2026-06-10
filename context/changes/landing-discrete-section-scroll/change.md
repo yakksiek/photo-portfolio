@@ -1,7 +1,7 @@
 ---
 change_id: landing-discrete-section-scroll
 title: Landing scrolls one whole section per scroll-step (discrete stepping)
-status: implementing
+status: implemented
 created: 2026-06-10
 updated: 2026-06-10
 archived_at: null

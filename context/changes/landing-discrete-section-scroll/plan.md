@@ -291,14 +291,14 @@ No new perf budget concerns: the island is `client:only`, matching today's clien
 
 #### Automated
 
-- [x] 3.1 Linting passes: `npm run lint`
-- [x] 3.2 Type checking passes: `npx astro check`
-- [x] 3.3 Production build succeeds: `npm run build`
+- [x] 3.1 Linting passes: `npm run lint` — dfd5d25
+- [x] 3.2 Type checking passes: `npx astro check` — dfd5d25
+- [x] 3.3 Production build succeeds: `npm run build` — dfd5d25
 
 #### Manual
 
-- [x] 3.4 One wheel-notch = exactly one landing target, no free-scroll drift; fast flick still advances one (lock)
-- [x] 3.5 Arrow/Page/Space step one target at a time, clamped at intro (up) and contact (down)
-- [x] 3.6 Side-by-side vs reference HTML: landing stepping feel matches
-- [x] 3.7 Reduced-motion: landing steps jump instantly, still one target
-- [x] 3.8 Native touch scroll on landing still works; Phase-2 stage/overview behaviors unregressed
+- [x] 3.4 One wheel-notch = exactly one landing target, no free-scroll drift; fast flick still advances one (lock) — dfd5d25
+- [x] 3.5 Arrow/Page/Space step one target at a time, clamped at intro (up) and contact (down) — dfd5d25
+- [x] 3.6 Side-by-side vs reference HTML: landing stepping feel matches — dfd5d25
+- [x] 3.7 Reduced-motion: landing steps jump instantly, still one target — dfd5d25
+- [x] 3.8 Native touch scroll on landing still works; Phase-2 stage/overview behaviors unregressed — dfd5d25
