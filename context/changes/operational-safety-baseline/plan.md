@@ -203,10 +203,10 @@ Persist the rehearsed procedure as a durable runbook, record the 2FA status, che
 
 #### Automated
 
-- [x] 3.1 Runbook exists at `context/changes/operational-safety-baseline/rollback-runbook.md`
-- [x] 3.2 Both Phase 7 items checked in `deployment-plan.md`
+- [x] 3.1 Runbook exists at `context/changes/operational-safety-baseline/rollback-runbook.md` — d09dc66
+- [x] 3.2 Both Phase 7 items checked in `deployment-plan.md` — d09dc66
 
 #### Manual
 
-- [x] 3.3 Runbook commands match exactly what was run in Phase 1
-- [x] 3.4 Recorded 2FA + recovery-codes status reflects Phase 2 confirmation
+- [x] 3.3 Runbook commands match exactly what was run in Phase 1 — d09dc66
+- [x] 3.4 Recorded 2FA + recovery-codes status reflects Phase 2 confirmation — d09dc66
