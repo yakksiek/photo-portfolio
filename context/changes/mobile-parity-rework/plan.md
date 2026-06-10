@@ -401,28 +401,28 @@ None — no schema or data changes. Pure front-end. Rollback is a code revert; F
 
 #### Automated
 
-- [x] 4.1 Lint passes: `npm run lint`
-- [x] 4.2 Build succeeds: `npm run build`
+- [x] 4.1 Lint passes: `npm run lint` — eb2eb20
+- [x] 4.2 Build succeeds: `npm run build` — eb2eb20
 
 #### Manual
 
-- [x] 4.3 Single hero matches `06`; in-section frame matches `07`
-- [x] 4.4 Swiping advances frames; rail hidden; right dots reflect current frame
-- [x] 4.5 SINGLE|ALL toggle switches modes; no descriptive sentence on hero
-- [x] 4.6 Desktop Single mode unchanged
+- [x] 4.3 Single hero matches `06`; in-section frame matches `07` — eb2eb20
+- [x] 4.4 Swiping advances frames; rail hidden; right dots reflect current frame — eb2eb20
+- [x] 4.5 SINGLE|ALL toggle switches modes; no descriptive sentence on hero — eb2eb20
+- [x] 4.6 Desktop Single mode unchanged — eb2eb20
 
 ### Phase 5: All mode (overview) mobile layout
 
 #### Automated
 
-- [ ] 5.1 Lint passes: `npm run lint`
-- [ ] 5.2 Build succeeds: `npm run build`
+- [x] 5.1 Lint passes: `npm run lint`
+- [x] 5.2 Build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 5.3 All mode matches `08` (top toggle + arrows, header + tagline, chapter list, lead + 2-col grid)
-- [ ] 5.4 Tapping a cell opens Single at the exact frame; toggle + section arrows work
-- [ ] 5.5 Tablet (641–880px) overview reflow intact; desktop overview unchanged
+- [x] 5.3 All mode matches `08` (top toggle + arrows, header + tagline, chapter list, lead + 2-col grid) — cell index numbers removed (owner request)
+- [x] 5.4 Tapping a cell opens Single at the exact frame; toggle + section arrows work
+- [x] 5.5 Tablet (641–880px) overview reflow intact; desktop overview unchanged
 
 ### Phase 6: Integration & fidelity sweep
 

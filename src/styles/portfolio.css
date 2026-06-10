@@ -1004,6 +1004,9 @@ body {
   align-items: baseline;
   gap: clamp(10px, 1.2vw, 18px);
   padding-bottom: clamp(2px, 0.6vh, 8px);
+  /* offset honored by onOverviewChapter's scrollIntoView so the heading clears
+     the top padding; phone raises this (Phase 5 block) to clear the chrome */
+  scroll-margin-top: 24px;
 }
 .ov-chead .ocn {
   font-family: var(--mono);
@@ -1526,6 +1529,67 @@ body {
     right: clamp(20px, 6vw, 40px);
     transform: none;
     bottom: clamp(22px, 4.5vh, 40px);
+  }
+
+  /* ---- Phase 5: All mode / overview (mockup 08) ---- */
+  /* Build on the 880px column reflow above: that rule already stacks
+     .ov-section to a column and lets it scroll. Here we reorder so the side
+     info leads (08: section number, title, tagline, chapter list, tags), then
+     the grid — and retune spacing/typography to phone. */
+
+  /* no in-overview "← Index" on mobile: Index is reached via the hamburger
+     menu, matching Single mode (Phase 4 hid .stage .backbtn). */
+  .overview .gback {
+    display: none;
+  }
+
+  /* ‹ Single|All › cluster stays centred just under the bar (08) */
+  .ov-chrome {
+    top: clamp(52px, 8.5vh, 84px);
+  }
+
+  /* info block leads; drop the 880 reflow's top border (it separated side from
+     grid when side came last — on mobile the side is first) and give it a
+     top pad that clears the bar + chrome */
+  .ov-side {
+    order: -1;
+    border-top: none;
+    padding: clamp(118px, 19vh, 150px) clamp(20px, 6vw, 40px) clamp(20px, 4vh, 32px);
+  }
+  .ov-side .os-num {
+    font-size: 12px;
+  }
+  .ov-side .os-title {
+    font-size: clamp(44px, 13vw, 66px);
+  }
+  .ov-side .os-tag {
+    font-size: clamp(14px, 4vw, 16px);
+    max-width: none;
+  }
+  .os-ch .osc-t {
+    font-size: 15px;
+  }
+  .os-ch .osc-m {
+    font-size: 10px;
+  }
+  .os-tags {
+    font-size: 10px;
+  }
+
+  /* grid follows the info block: trim the desktop top padding (the section
+     header already sits above it) and tighten side gutters to phone */
+  .ov-inner {
+    padding: clamp(14px, 3vh, 26px) clamp(20px, 6vw, 40px) clamp(40px, 8vh, 72px);
+    gap: clamp(28px, 5vh, 48px);
+  }
+  /* lead cell reads a touch taller on phone than the desktop 16/9 (08) */
+  .ov-cell.lead {
+    aspect-ratio: 3 / 2;
+  }
+  /* chapter-list taps scroll the section (the scroll container on mobile) to
+     the heading; raise the margin so it lands below the bar + ov-chrome */
+  .ov-chead {
+    scroll-margin-top: clamp(104px, 15vh, 128px);
   }
 }
 

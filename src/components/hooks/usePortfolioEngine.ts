@@ -390,7 +390,14 @@ export function usePortfolioEngine(data: PortfolioData) {
       if (!touch) return;
       const deltaY = touchStartYRef.current - touch.clientY;
       if (Math.abs(deltaY) > TOUCH_THRESHOLD) {
-        step(deltaY > 0 ? 1 : -1);
+        const direction = deltaY > 0 ? 1 : -1;
+        // Touch must never trigger step()'s "swipe-down-at-the-first-frame leaves
+        // the section" exit (a desktop wheel/keyboard affordance). On a phone the
+        // gesture direction is ambiguous, so an accidental exit at the hero reads
+        // as the app breaking back to the landing. Mobile leaves Single via the
+        // hamburger / SINGLE|ALL toggle instead (Phase 4 decision). Desktop wheel
+        // and keyboard still reach the exit because they call step() directly.
+        if (!(direction < 0 && panelIndexRef.current === 0)) step(direction);
         touchStartYRef.current = null;
       }
     };
@@ -521,13 +528,15 @@ export function usePortfolioEngine(data: PortfolioData) {
     if (overviewSectionIndexRef.current < sections.length - 1) showOverview(overviewSectionIndexRef.current + 1);
   }, [showOverview, sections.length]);
 
-  // scroll an overview section's main to a chapter heading (portfolio.ts:529–533)
+  // scroll the overview to a chapter heading. scrollIntoView targets whichever
+  // ancestor actually scrolls — .ov-main on desktop, .ov-section on mobile
+  // (the ≤880 reflow moves overflow to the section) — and honors the per-
+  // breakpoint scroll-margin-top on .ov-chead so the heading clears the chrome.
   const onOverviewChapter = useCallback((sectionIndex: number, groupIndex: number) => {
     const main = overviewMainRefs.current[sectionIndex];
     if (!main) return;
-    const headings = main.querySelectorAll<HTMLElement>(".ov-chead");
-    const heading = headings[groupIndex];
-    if (heading) main.scrollTo({ top: heading.offsetTop - 24, behavior: "smooth" });
+    const heading = main.querySelectorAll<HTMLElement>(".ov-chead")[groupIndex];
+    heading?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
   const setOverviewMainRef = useCallback((sectionIndex: number, node: HTMLDivElement | null) => {
