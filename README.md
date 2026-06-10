@@ -1,175 +1,159 @@
-# 10x Astro Starter
+# Marcin Kulbicki — Photography Portfolio
 
-![](./public/template.png)
+A self-manageable, cinematic photography portfolio. A dark editorial front-end with a
+bespoke hijacked-scroll engine (Single + All view modes) sits on top of a headless CMS,
+so the owner publishes new work — sections, chapters, photos — **without a developer in
+the loop**.
 
-A modern, opinionated starter template for building fast, accessible web applications.
+🔗 **Live:** [marcinkulbicki.com](https://marcinkulbicki.com)
 
-## Tech Stack
+> _Note: this is a portfolio/case-study README. It documents both the product and the
+> way it was built — the build process is itself part of what this project demonstrates._
 
-- [Astro](https://astro.build/) v6 - Modern web framework with server-first rendering
-- [React](https://react.dev/) v19 - UI library for interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4 - Utility-first CSS framework
-- [Supabase](https://supabase.com/) - Authentication and backend-as-a-service
-- [Cloudflare Workers](https://workers.cloudflare.com/) - Edge deployment runtime
+---
 
-## Prerequisites
+## Screens
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+**Landing** — full-bleed hero with the section index; one discrete scroll-step per section.
 
-## Getting Started
+![Landing page](docs/screenshots/landing.jpg)
 
-1. Clone the repository:
+**Single mode** — one cinematic frame per chapter, hero-led, with a frame counter and the Single / All toggle.
 
-```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
+![Single view mode](docs/screenshots/single-mode.jpg)
+
+**All mode** — an editorial overview of a whole section's chapters at once.
+
+![All view mode](docs/screenshots/all-mode.jpg)
+
+**Mobile** — full parity, not a reduced experience: both view modes and the hijacked-scroll
+engine work via touch, with a dedicated menu overlay for navigation.
+
+| Intro | Menu | Single mode | All mode |
+| :---: | :---: | :---: | :---: |
+| ![Mobile intro](docs/screenshots/mobile-intro.jpg) | ![Mobile menu](docs/screenshots/mobile-menu.jpg) | ![Mobile single mode](docs/screenshots/mobile-single.jpg) | ![Mobile all mode](docs/screenshots/mobile-all.jpg) |
+
+---
+
+## What it is
+
+The site presents photography as an ordered tree: **Section → Chapter → Photo**. Visitors
+explore it two ways:
+
+- **Single mode** — one cinematic frame at a time, hero-led, full-bleed.
+- **All mode** — an editorial overview of every section at once.
+
+Navigation is driven by a custom **scroll-hijacking engine**: each scroll step advances one
+discrete section rather than free-scrolling, recreating a deliberate, gallery-like pacing on
+both desktop and touch.
+
+All content is editorial data, not code. The owner logs into the CMS, adds a chapter or
+reorders photos, and a webhook rebuilds and redeploys the static site automatically.
+
+## Tech stack
+
+| Layer | Choice | Why |
+| --- | --- | --- |
+| Framework | [Astro 6](https://astro.build/) | Static-first; ships zero JS except where islands are needed |
+| Interactivity | [React 19](https://react.dev/) islands | The scroll engine + view modes are the only client-side JS |
+| Language | [TypeScript 5](https://www.typescriptlang.org/) | Typed content model and engine state |
+| Styling | [Tailwind CSS 4](https://tailwindcss.com/) + bespoke `portfolio.css` | Utility classes for layout, hand-authored CSS for the cinematic chrome |
+| Content | [Sanity](https://www.sanity.io/) (headless CMS) | Self-managed publishing, no hand-built auth, no free-tier pausing |
+| Hosting | [Cloudflare Workers Static Assets](https://workers.cloudflare.com/) | Edge-served static `dist/`, no SSR runtime |
+| UI primitives | [shadcn/ui](https://ui.shadcn.com/) ("new-york") | A few accessible primitives where needed |
+
+### Architecture at a glance
+
+- **Static output, dynamic content.** `output: "static"` — content is fetched from Sanity
+  **at build time** via a single GROQ query, so the live site has _no_ runtime dependency on
+  the backend. If the CMS were offline, the published site keeps serving.
+- **The CMS ships with the app.** Sanity Studio is embedded at `/admin` (client-rendered,
+  hash-routed), so editing lives in the same deploy as the site.
+- **Engine as an island.** The hijacked-scroll engine is a React island
+  (`src/components/Portfolio.tsx` + `src/components/hooks/usePortfolioEngine.ts`); everything
+  else stays static Astro. It was migrated from a vanilla-JS prototype during development.
+- **Publish-without-code loop.** Sanity webhook → Cloudflare build → redeploy. Proven in
+  production.
+
+> The project began from the **10x Astro Starter** (Astro + React + TS + Tailwind +
+> Cloudflare). The starter's bundled **Supabase** backend was removed and replaced with
+> **Sanity** — the product needs self-managed _content publishing_, not user accounts, and
+> a managed-auth CMS removed an entire auth surface from the build.
+
+## How it was built
+
+This project was developed **spec-first with an AI coding agent**, using a structured,
+markdown-driven workflow (the 10xDevs AI Toolkit). Rather than ad-hoc prompting, every unit
+of work flowed through durable artifacts under `context/`:
+
+```
+shape an idea  →  PRD  →  tech-stack + infra decisions  →  roadmap
+                                                              │
+            per change:  identity → plan → plan-review → implement → archive
 ```
 
-2. Install dependencies:
+- `context/foundation/` — the durable "what & why": shaping notes, PRD, tech-stack rationale,
+  infrastructure choice, and the roadmap of vertical slices.
+- `context/changes/<id>/` — one folder per change, each with a written **implementation
+  contract** (plan), a compressed handoff, and recorded progress (commit SHAs written back
+  after each phase).
+- `context/archive/` — completed changes, frozen.
+
+The result is a codebase where the _reasoning_ behind each decision is checked in alongside
+the code, and the implementation was executed one verified slice at a time. The bespoke
+front-end was ported from a captured **design reference** (`context/foundation/design-reference/`)
+and verified for visual fidelity against it.
+
+## Getting started
+
+Requires **Node.js v22.14.0** (see `.nvmrc`).
 
 ```bash
 npm install
+npm run dev        # Astro dev server at http://localhost:4321
 ```
 
-3. Set up Supabase and configure environment variables — see [Supabase Configuration](#supabase-configuration) below.
+No `.env` is required to run — the Sanity project coordinates (`projectId`, `dataset`) are
+public, non-secret values baked in as defaults. Override via `PUBLIC_SANITY_*` env vars only
+if pointing at a different project.
 
-4. Create a `.dev.vars` file for local Cloudflare dev secrets:
+Sanity Studio (content editing) is available at `/admin` once the dev server is running.
 
-```bash
-cp .env.example .dev.vars
-```
+## Scripts
 
-5. Run the development server:
+| Script | Does |
+| --- | --- |
+| `npm run dev` | Start the Astro dev server |
+| `npm run build` | Build the static `./dist` (fetches content from Sanity at build time) |
+| `npm run preview` | Preview the production build locally |
+| `npm run deploy` | `astro build && wrangler deploy` to Cloudflare |
+| `npm run lint` / `lint:fix` | ESLint (with project conventions enforced) |
+| `npm run format` | Prettier + Astro + Tailwind class sorting |
+| `npm run cf:tail` | Stream live Cloudflare logs |
 
-```bash
-npm run dev
-```
-
-## Available Scripts
-
-- `npm run dev` - Start development server (Cloudflare workerd runtime)
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint with type-checked rules
-- `npm run lint:fix` - Auto-fix ESLint issues
-- `npm run format` - Run Prettier
-
-## Project Structure
-
-```md
-.
-├── src/
-│ ├── layouts/ # Astro layouts
-│ ├── pages/ # Astro pages
-│ │ └── api/ # API endpoints
-│ ├── components/ # UI components (Astro & React)
-│ └── assets/ # Static assets
-├── public/ # Public assets
-├── wrangler.jsonc # Cloudflare Workers config
-```
-
-## Supabase Configuration
-
-This project uses [Supabase](https://supabase.com/) for authentication. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
-
-### First-time setup (local, no cloud project needed)
-
-Requires [Docker](https://www.docker.com/) and ~7 GB RAM.
-
-1. Create your `.env` file:
-
-```bash
-cp .env.example .env
-```
-
-2. Initialize the local Supabase project (creates a `supabase/` config folder):
-
-```bash
-npx supabase init
-```
-
-3. Start the local stack (downloads Docker images on first run):
-
-```bash
-npx supabase start
-```
-
-4. Copy the credentials printed by the CLI into your `.env` and `.dev.vars`:
+## Project structure
 
 ```
-SUPABASE_URL=http://127.0.0.1:54321
-SUPABASE_KEY=<anon key from CLI output>
+src/
+├─ components/        # Portfolio island + hooks, UI primitives
+│  └─ hooks/          # usePortfolioEngine — the scroll engine state
+├─ pages/             # index.astro (build-time Sanity fetch), /admin Studio mount
+├─ sanity/            # client, env, GROQ queries, schema (section/chapter/photo)
+├─ layouts/           # Astro layouts
+├─ lib/               # helpers (cn(), services)
+├─ styles/            # portfolio.css — the cinematic chrome
+└─ types.ts           # shared types
+sanity.config.ts      # Studio config (mounted at /admin)
+context/              # spec-driven build artifacts (PRD, roadmap, change plans)
 ```
-
-5. To stop the stack when done:
-
-```bash
-npx supabase stop
-```
-
-The local Studio UI is available at `http://localhost:54323`.
-
-No database tables or migrations are required — this project uses Supabase Auth's built-in `auth.users` table only.
-
-### Using a cloud Supabase project instead
-
-If you prefer to use a hosted Supabase project, add these variables to your `.env` and `.dev.vars` files:
-
-| Variable       | Description                                                |
-| -------------- | ---------------------------------------------------------- |
-| `SUPABASE_URL` | Project URL from Supabase dashboard → Settings → API       |
-| `SUPABASE_KEY` | `anon` public key from Supabase dashboard → Settings → API |
-
-```
-SUPABASE_URL=https://<project-ref>.supabase.co
-SUPABASE_KEY=<anon-key>
-```
-
-### Email confirmation in local development
-
-By default Supabase requires email confirmation before a user can sign in. To skip this during local development:
-
-1. Open the Supabase dashboard for your project
-2. Go to **Authentication → Email → Confirm email**
-3. Toggle it **off**
-
-Users can then sign in immediately after sign-up without clicking a confirmation link.
-
-### Auth routes
-
-| Route                 | Description                                                             |
-| --------------------- | ----------------------------------------------------------------------- |
-| `/auth/signin`        | Email/password sign-in form                                             |
-| `/auth/signup`        | Email/password sign-up form                                             |
-| `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
-| `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
-
-Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
 
 ## Deployment
 
-This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/).
+Deployed to **Cloudflare Workers Static Assets** via **Cloudflare Builds** — build + deploy
+run automatically on push to `main`. No backend secrets are needed in the deploy; the public
+Sanity coordinates live in code.
 
-1. Build the project:
+## Credits
 
-```bash
-npm run build
-```
-
-2. Deploy with Wrangler:
-
-```bash
-npx wrangler deploy
-```
-
-Set `SUPABASE_URL` and `SUPABASE_KEY` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`.
-
-## CI
-
-GitHub Actions runs lint + build on every push and PR to `master`. Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets in GitHub for the build step.
-
-## License
-
-MIT
+Photography & concept: **Marcin Kulbicki**. Scaffolded from the 10x Astro Starter; built
+with an AI-assisted, spec-driven workflow.
