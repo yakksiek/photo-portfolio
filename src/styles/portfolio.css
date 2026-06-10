@@ -1441,6 +1441,92 @@ body {
   .contact .c-mail::after {
     transform: scaleX(1);
   }
+
+  /* ---- Phase 4: Single mode (mockups 06/07) ---- */
+  /* SINGLE|ALL toggle → top-right just under the bar (06/07), not centred.
+     Scoped to .stage so the overview's own .vtoggle (Phase 5) is untouched. */
+  .stage .vtoggle {
+    left: auto;
+    right: clamp(20px, 6vw, 40px);
+    top: clamp(52px, 8.5vh, 84px);
+    transform: none;
+  }
+
+  /* right-side vertical frame dots (06/07): tuck tighter to the edge, smaller */
+  .stage .dots {
+    right: clamp(12px, 4vw, 20px);
+    gap: 9px;
+  }
+  .stage .dots button {
+    width: 6px;
+    height: 6px;
+  }
+
+  /* in-section frames: stretch the contained photo to the full phone width.
+     The desktop side gutters (clamp(56px,12vw,220px)) left tall black stripes
+     on a narrow viewport; zero the horizontal inset and keep vertical insets
+     clearing the top toggle and the bottom meta cluster. */
+  .stage .panel:not(.hero) .ph {
+    inset: clamp(108px, 16vh, 132px) 0 clamp(72px, 12vh, 104px);
+  }
+
+  /* Chrome the mockups don't show in Single on mobile: the desktop chapter rail
+     (chapter nav is via All mode + sequential swipe, per decision), the top-right
+     section marker (its identity is in the hero-cap eyebrow), the section pager,
+     and the in-stage "← Index" back button (Index is reached via the hamburger
+     menu). .gback (overview back, Phase 5) is a different element and untouched. */
+  .stage .rail,
+  .stage .marker,
+  .stage .pager,
+  .stage .backbtn {
+    display: none;
+  }
+
+  /* hero-cap → bottom-left meta block, stacked above the hud line (06).
+     The descriptive sentence is omitted (description is dropped upstream); the
+     block is eyebrow + title + meta·frames only. */
+  .stage .panel .hero-cap {
+    left: clamp(20px, 6vw, 40px);
+    right: clamp(40px, 12vw, 72px);
+    bottom: clamp(62px, 12vh, 104px);
+  }
+  .stage .hero-cap .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    margin-bottom: 12px;
+  }
+  .stage .hero-cap .big {
+    font-size: clamp(48px, 16vw, 88px);
+    line-height: 0.9;
+  }
+  .stage .hero-cap .sub {
+    margin-top: 12px;
+    font-size: 13px;
+    max-width: none;
+  }
+
+  /* per-frame meta (idx + chapter) → very bottom-left (06 hero line, 07 frame) */
+  .stage .hud {
+    left: clamp(20px, 6vw, 40px);
+    right: clamp(40px, 12vw, 72px);
+    bottom: clamp(22px, 4.5vh, 40px);
+    gap: 14px;
+  }
+  .stage .hud .idx {
+    font-size: 13px;
+  }
+  .stage .hud .cap {
+    font-size: 10px;
+    max-width: 22ch;
+  }
+
+  /* scroll cue → bottom-right on the hero (06); already `.gone` on frames (07) */
+  .stage .scrollcue {
+    left: auto;
+    right: clamp(20px, 6vw, 40px);
+    transform: none;
+    bottom: clamp(22px, 4.5vh, 40px);
+  }
 }
 
 /* photo treatment */

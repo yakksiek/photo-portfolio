@@ -387,29 +387,29 @@ None — no schema or data changes. Pure front-end. Rollback is a code revert; F
 
 #### Automated
 
-- [x] 3.1 Lint passes: `npm run lint`
-- [x] 3.2 Build succeeds: `npm run build`
+- [x] 3.1 Lint passes: `npm run lint` — aece0ee
+- [x] 3.2 Build succeeds: `npm run build` — aece0ee
 
 #### Manual
 
-- [x] 3.3 Intro matches `01` (title) and `02` (resting) — owner override: hero animation desktop-only; mobile shows resting only (links centred, cue bottom + orange, no active highlight)
-- [x] 3.4 Bands full-bleed match `04`; section dots update as you swipe
-- [x] 3.5 Contact matches `05` — owner redesign: minimal (eyebrow + email), full-height, name/location removed (desktop too)
-- [x] 3.6 Desktop landing unchanged (except owner-requested contact redesign)
+- [x] 3.3 Intro matches `01` (title) and `02` (resting) — owner override: hero animation desktop-only; mobile shows resting only (links centred, cue bottom + orange, no active highlight) — aece0ee
+- [x] 3.4 Bands full-bleed match `04`; section dots update as you swipe — aece0ee
+- [x] 3.5 Contact matches `05` — owner redesign: minimal (eyebrow + email), full-height, name/location removed (desktop too) — aece0ee
+- [x] 3.6 Desktop landing unchanged (except owner-requested contact redesign) — aece0ee
 
 ### Phase 4: Single mode mobile layout
 
 #### Automated
 
-- [ ] 4.1 Lint passes: `npm run lint`
-- [ ] 4.2 Build succeeds: `npm run build`
+- [x] 4.1 Lint passes: `npm run lint`
+- [x] 4.2 Build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 4.3 Single hero matches `06`; in-section frame matches `07`
-- [ ] 4.4 Swiping advances frames; rail hidden; right dots reflect current frame
-- [ ] 4.5 SINGLE|ALL toggle switches modes; no descriptive sentence on hero
-- [ ] 4.6 Desktop Single mode unchanged
+- [x] 4.3 Single hero matches `06`; in-section frame matches `07`
+- [x] 4.4 Swiping advances frames; rail hidden; right dots reflect current frame
+- [x] 4.5 SINGLE|ALL toggle switches modes; no descriptive sentence on hero
+- [x] 4.6 Desktop Single mode unchanged
 
 ### Phase 5: All mode (overview) mobile layout
 
