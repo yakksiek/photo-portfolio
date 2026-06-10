@@ -196,17 +196,17 @@ Persist the rehearsed procedure as a durable runbook, record the 2FA status, che
 
 #### Manual
 
-- [x] 2.1 Owner confirms 2FA enabled on the Cloudflare account
-- [x] 2.2 Owner confirms recovery/backup codes saved off-platform
+- [x] 2.1 Owner confirms 2FA enabled on the Cloudflare account — 52b6ccb
+- [x] 2.2 Owner confirms recovery/backup codes saved off-platform — 52b6ccb
 
 ### Phase 3: Capture runbook & close out
 
 #### Automated
 
-- [ ] 3.1 Runbook exists at `context/changes/operational-safety-baseline/rollback-runbook.md`
-- [ ] 3.2 Both Phase 7 items checked in `deployment-plan.md`
+- [x] 3.1 Runbook exists at `context/changes/operational-safety-baseline/rollback-runbook.md`
+- [x] 3.2 Both Phase 7 items checked in `deployment-plan.md`
 
 #### Manual
 
-- [ ] 3.3 Runbook commands match exactly what was run in Phase 1
-- [ ] 3.4 Recorded 2FA + recovery-codes status reflects Phase 2 confirmation
+- [x] 3.3 Runbook commands match exactly what was run in Phase 1
+- [x] 3.4 Recorded 2FA + recovery-codes status reflects Phase 2 confirmation

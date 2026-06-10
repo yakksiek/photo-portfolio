@@ -84,13 +84,13 @@ Make a Studio publish rebuild the live site.
 - ☑ **Test end-to-end:** reordered chapters in Studio → Publish → Workers build fired → reordered content confirmed live after rebuild. Self-manageable loop proven (verified manually by the owner).
 - ☑ **Edge case — debounce:** the Drafts-OFF setting means only published mutations fire the hook, so autosave keystrokes don't nibble the build quota. Good enough for an occasionally-updated portfolio.
 
-## Phase 7 — Post-deploy hardening  ◑  *(domain/site/CORS done; rollback drill + 2FA optional)*
+## Phase 7 — Post-deploy hardening  ☑  *(domain/site/CORS done; rollback drill + 2FA completed via operational-safety-baseline 2026-06-10)*
 
 - ☑ **Custom domain (brought forward from "later"):** bought `marcinkulbicki.com` via Cloudflare Registrar; attached apex `marcinkulbicki.com` + `www.marcinkulbicki.com` as **Custom Domains** on the Worker (auto DNS + SSL). Both live over HTTPS (200, valid cert). `*.workers.dev` still works alongside.
 - ☑ **Finalize `site`:** `astro.config.mjs` `site:` set to the canonical apex `https://marcinkulbicki.com` → next deploy emits a correct absolute sitemap.
 - ☑ **Sanity CORS for the Studio origins:** added `https://photo-portfolio.marcin-kulbicki.workers.dev`, `https://marcinkulbicki.com`, and `https://www.marcinkulbicki.com` (all `--credentials`). *(Needed because the embedded Studio is a browser app hitting the Sanity API from these origins. The public site fetches at build time and needs no runtime CORS.)*
-- ☐ **Rollback drill:** `wrangler deployments list`, then practice `wrangler rollback` so the revert path is known before it's needed (seconds to revert — static assets only).
-- ☐ **Account 2FA** (vendor-concentration mitigation) — confirm enabled.
+- ☑ **Rollback drill:** rehearsed 2026-06-10 — `wrangler rollback` to prior version `223642e6`, verified the revert, rolled forward to current `03229d5d` (live `200`). Procedure captured in `context/changes/operational-safety-baseline/rollback-runbook.md`.
+- ☑ **Account 2FA** (vendor-concentration mitigation) — enabled 2026-06-10 (Mobile App / TOTP, was Inactive); recovery codes saved off-platform in a password manager.
 
 ---
 
