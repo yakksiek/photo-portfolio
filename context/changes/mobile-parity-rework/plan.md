@@ -415,14 +415,14 @@ None — no schema or data changes. Pure front-end. Rollback is a code revert; F
 
 #### Automated
 
-- [x] 5.1 Lint passes: `npm run lint`
-- [x] 5.2 Build succeeds: `npm run build`
+- [x] 5.1 Lint passes: `npm run lint` — 450e723
+- [x] 5.2 Build succeeds: `npm run build` — 450e723
 
 #### Manual
 
-- [x] 5.3 All mode matches `08` (top toggle + arrows, header + tagline, chapter list, lead + 2-col grid) — cell index numbers removed (owner request)
-- [x] 5.4 Tapping a cell opens Single at the exact frame; toggle + section arrows work
-- [x] 5.5 Tablet (641–880px) overview reflow intact; desktop overview unchanged
+- [x] 5.3 All mode matches `08` (top toggle + arrows, header + tagline, chapter list, lead + 2-col grid) — cell index numbers removed (owner request) — 450e723
+- [x] 5.4 Tapping a cell opens Single at the exact frame; toggle + section arrows work — 450e723
+- [x] 5.5 Tablet (641–880px) overview reflow intact; desktop overview unchanged — 450e723
 
 ### Phase 6: Integration & fidelity sweep
 
