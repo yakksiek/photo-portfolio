@@ -183,21 +183,21 @@ Persist the rehearsed procedure as a durable runbook, record the 2FA status, che
 
 #### Automated
 
-- [x] 1.1 `wrangler deployments list` returns deploy history with version ids
-- [x] 1.2 Live site responds 200 after roll-forward (`curl` marcinkulbicki.com)
+- [x] 1.1 `wrangler deployments list` returns deploy history with version ids — 3df75ca
+- [x] 1.2 Live site responds 200 after roll-forward (`curl` marcinkulbicki.com) — 3df75ca
 
 #### Manual
 
-- [x] 1.3 After rollback, live site served the prior build (revert proven)
-- [x] 1.4 After roll-forward, live site matches current `main`
-- [x] 1.5 Commands, both version ids, and time-to-revert captured for the runbook
+- [x] 1.3 After rollback, live site served the prior build (revert proven) — 3df75ca
+- [x] 1.4 After roll-forward, live site matches current `main` — 3df75ca
+- [x] 1.5 Commands, both version ids, and time-to-revert captured for the runbook — 3df75ca
 
 ### Phase 2: Confirm account 2FA + recovery codes
 
 #### Manual
 
-- [ ] 2.1 Owner confirms 2FA enabled on the Cloudflare account
-- [ ] 2.2 Owner confirms recovery/backup codes saved off-platform
+- [x] 2.1 Owner confirms 2FA enabled on the Cloudflare account
+- [x] 2.2 Owner confirms recovery/backup codes saved off-platform
 
 ### Phase 3: Capture runbook & close out
 
