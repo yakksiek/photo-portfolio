@@ -260,32 +260,32 @@ No new perf budget concerns: the island is `client:only`, matching today's clien
 
 #### Automated
 
-- [x] 1.1 Linting passes: `npm run lint`
-- [x] 1.2 Type checking passes: `npx astro check`
-- [x] 1.3 Production build succeeds: `npm run build`
+- [x] 1.1 Linting passes: `npm run lint` — 80f6a06
+- [x] 1.2 Type checking passes: `npx astro check` — 80f6a06
+- [x] 1.3 Production build succeeds: `npm run build` — 80f6a06
 
 #### Manual
 
-- [x] 1.4 Landing (intro, bands, contact) renders and is correctly styled — class names resolve against `portfolio.css`
-- [x] 1.5 Section bands show correct numbering, titles, counts, and hero images
-- [x] 1.6 No console errors; island mounts cleanly
+- [x] 1.4 Landing (intro, bands, contact) renders and is correctly styled — class names resolve against `portfolio.css` — 80f6a06
+- [x] 1.5 Section bands show correct numbering, titles, counts, and hero images — 80f6a06
+- [x] 1.6 No console errors; island mounts cleanly — 80f6a06
 
 ### Phase 2: Port interactive behavior to parity
 
 #### Automated
 
-- [ ] 2.1 Linting passes: `npm run lint`
-- [ ] 2.2 Type checking passes: `npx astro check`
-- [ ] 2.3 Production build succeeds: `npm run build`
-- [ ] 2.4 No references to the deleted script remain: `grep -rn "scripts/portfolio" src` is empty
+- [x] 2.1 Linting passes: `npm run lint`
+- [x] 2.2 Type checking passes: `npx astro check`
+- [x] 2.3 Production build succeeds: `npm run build`
+- [x] 2.4 No references to the deleted script remain: `grep -rn "scripts/portfolio" src` is empty
 
 #### Manual
 
-- [ ] 2.5 Stage scroll-hijack works (wheel/Arrow/Page/Space one-panel step + lock; Escape/back returns to landing band)
-- [ ] 2.6 Nav parity (brand/Index reset + hero replay; section enter / overview switch; Contact scroll)
-- [ ] 2.7 Single/All toggle, overview grid, prev/next arrows, rail + dots, click-to-frame behave as today
-- [ ] 2.8 Hero-name collapse (~2s) and intro-bg hover crossfade as today
-- [ ] 2.9 No regressions vs current site across landing, Single, All
+- [x] 2.5 Stage scroll-hijack works (wheel/Arrow/Page/Space one-panel step + lock; Escape/back returns to landing band)
+- [x] 2.6 Nav parity (brand/Index reset + hero replay; section enter / overview switch; Contact scroll)
+- [x] 2.7 Single/All toggle, overview grid, prev/next arrows, rail + dots, click-to-frame behave as today
+- [x] 2.8 Hero-name collapse (~1.5s — owner-tweaked from 2s) and intro-bg hover crossfade as today
+- [x] 2.9 No regressions vs current site across landing, Single, All
 
 ### Phase 3: Discrete landing stepping (the S-01 feature)
 
