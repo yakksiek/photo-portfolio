@@ -1,23 +1,25 @@
+// core
 import { Fragment } from "react";
 
-import { usePortfolioEngine } from "@/components/hooks/usePortfolioEngine";
-import { cn } from "@/lib/utils";
-import type { PortfolioData, Section } from "@/types";
+// others
+import { usePortfolioEngine } from "./hooks/usePortfolioEngine";
+import { cn } from "../lib/utils";
+import type { PortfolioData, Section } from "../types";
 
-function pad(n: number): string {
-  return n < 10 ? "0" + String(n) : String(n);
+function pad(value: number): string {
+  return value < 10 ? "0" + String(value) : String(value);
 }
 
-function totalFrames(s: Section): number {
-  let t = 0;
-  s.groups.forEach((g) => {
-    t += g.frames.length + 1;
+function totalFrames(section: Section): number {
+  let total = 0;
+  section.groups.forEach((group) => {
+    total += group.frames.length + 1;
   });
-  return t;
+  return total;
 }
 
 // Mirror of the vanilla makeImg() (portfolio.ts:56–65): real <img class="slot">.
-function makeImg(src: string, fit: "cover" | "contain", alt: string) {
+function makeImage(src: string, fit: "cover" | "contain", alt: string) {
   return (
     <img
       className="slot"
@@ -34,14 +36,13 @@ function makeImg(src: string, fit: "cover" | "contain", alt: string) {
  * Portfolio scroll-engine island. Renders the full DOM the vanilla mount()
  * (portfolio.ts:71–334) built with verbatim class names, now state-driven:
  * engine state + behavior live in usePortfolioEngine. Behavior is at parity
- * with the vanilla site (the landing still uses native scroll here; discrete
- * stepping is Phase 3).
+ * with the vanilla site, plus the discrete landing stepping (Phase 3).
  */
 export default function Portfolio({ data }: { data: PortfolioData }) {
-  const SECTIONS = data.sections;
-  const CONTACT = data.contact;
+  const sections = data.sections;
+  const contact = data.contact;
 
-  const eng = usePortfolioEngine(data);
+  const engine = usePortfolioEngine(data);
   const {
     viewportRef,
     landingRef,
@@ -49,41 +50,44 @@ export default function Portfolio({ data }: { data: PortfolioData }) {
     stageRef,
     nameRef,
     roleRef,
-    setOvMainRef,
+    setOverviewMainRef,
     panels,
     sectionStart,
-    sectionLen,
+    sectionLength,
     groupStart,
-    defaultBg,
-    idx,
+    defaultBackgroundIndex,
+    panelIndex,
     stageOn,
     overviewOn,
-    overviewSi,
+    overviewSectionIndex,
     overviewMounted,
-    bgIdx,
+    backgroundIndex,
     activeSectionKey,
     goTo,
     enter,
     openSingleAt,
     showOverview,
-    setIntroBg,
+    setIntroBackground,
     onBrandIndex,
     onContact,
     onBack,
     onSectionNav,
-    onPrevSec,
-    onNextSec,
+    onPrevSection,
+    onNextSection,
     onOverviewBack,
-    onOvPrev,
-    onOvNext,
-    onOvChapter,
-  } = eng;
+    onOverviewPrev,
+    onOverviewNext,
+    onOverviewChapter,
+  } = engine;
 
-  const p = panels[idx];
-  const total = p ? p.g.frames.length + 1 : 0;
-  const prevS = p ? SECTIONS[p.si - 1] : undefined;
-  const nextS = p ? SECTIONS[p.si + 1] : undefined;
-  const progScale = p ? (idx - (sectionStart[p.si] ?? 0)) / Math.max(1, (sectionLen[p.si] ?? 1) - 1) : 0;
+  const currentPanel = panels[panelIndex];
+  const frameCount = currentPanel ? currentPanel.group.frames.length + 1 : 0;
+  const prevSection = currentPanel ? sections[currentPanel.sectionIndex - 1] : undefined;
+  const nextSection = currentPanel ? sections[currentPanel.sectionIndex + 1] : undefined;
+  const progressScale = currentPanel
+    ? (panelIndex - (sectionStart[currentPanel.sectionIndex] ?? 0)) /
+      Math.max(1, (sectionLength[currentPanel.sectionIndex] ?? 1) - 1)
+    : 0;
 
   return (
     <div className="viewport theme-a" tabIndex={-1} ref={viewportRef}>
@@ -99,22 +103,22 @@ export default function Portfolio({ data }: { data: PortfolioData }) {
         <div
           className="menu"
           onMouseLeave={() => {
-            setIntroBg(defaultBg);
+            setIntroBackground(defaultBackgroundIndex);
           }}
         >
           <button onClick={onBrandIndex}>Index</button>
-          {SECTIONS.map((s, i) => (
+          {sections.map((section, sectionIndex) => (
             <button
-              key={s.key}
-              className={cn(activeSectionKey === s.key && "active")}
+              key={section.key}
+              className={cn(activeSectionKey === section.key && "active")}
               onMouseEnter={() => {
-                setIntroBg(i);
+                setIntroBackground(sectionIndex);
               }}
               onClick={() => {
-                onSectionNav(i);
+                onSectionNav(sectionIndex);
               }}
             >
-              {s.title}
+              {section.title}
             </button>
           ))}
           <button onClick={onContact}>Contact</button>
@@ -126,9 +130,13 @@ export default function Portfolio({ data }: { data: PortfolioData }) {
         <div className="intro">
           {/* background layer — mirrors each section's landing hero, crossfades on hover */}
           <div className="intro-bg">
-            {SECTIONS.map((s, i) => (
-              <div key={s.key} className={cn("bgshot", i === bgIdx && "on")} data-key={s.key}>
-                {s.landing ? makeImg(s.landing.src, "cover", s.landing.alt) : null}
+            {sections.map((section, sectionIndex) => (
+              <div
+                key={section.key}
+                className={cn("bgshot", sectionIndex === backgroundIndex && "on")}
+                data-key={section.key}
+              >
+                {section.landing ? makeImage(section.landing.src, "cover", section.landing.alt) : null}
               </div>
             ))}
           </div>
@@ -144,28 +152,28 @@ export default function Portfolio({ data }: { data: PortfolioData }) {
             className="role"
             ref={roleRef}
             onMouseLeave={() => {
-              setIntroBg(defaultBg);
+              setIntroBackground(defaultBackgroundIndex);
             }}
           >
             <span className="role-pre">Photographer —</span>
             <div className="role-links">
-              {SECTIONS.map((s, i) => (
-                <Fragment key={s.key}>
-                  {i > 0 ? <span className="role-sep">·</span> : null}
+              {sections.map((section, sectionIndex) => (
+                <Fragment key={section.key}>
+                  {sectionIndex > 0 ? <span className="role-sep">·</span> : null}
                   <button
-                    className={cn("rolelink", i === bgIdx && "active")}
-                    data-i={i}
+                    className={cn("rolelink", sectionIndex === backgroundIndex && "active")}
+                    data-i={sectionIndex}
                     onMouseEnter={() => {
-                      setIntroBg(i);
+                      setIntroBackground(sectionIndex);
                     }}
                     onFocus={() => {
-                      setIntroBg(i);
+                      setIntroBackground(sectionIndex);
                     }}
                     onClick={() => {
-                      enter(i);
+                      enter(sectionIndex);
                     }}
                   >
-                    {s.title}
+                    {section.title}
                   </button>
                 </Fragment>
               ))}
@@ -176,26 +184,28 @@ export default function Portfolio({ data }: { data: PortfolioData }) {
         </div>
 
         {/* section bands */}
-        {SECTIONS.map((s, i) => (
+        {sections.map((section, sectionIndex) => (
           <div
-            key={s.key}
+            key={section.key}
             className="band"
-            data-section={i}
+            data-section={sectionIndex}
             onClick={() => {
-              enter(i);
+              enter(sectionIndex);
             }}
           >
-            <div className="ph">{s.landing ? makeImg(s.landing.src, "cover", s.landing.alt) : null}</div>
+            <div className="ph">
+              {section.landing ? makeImage(section.landing.src, "cover", section.landing.alt) : null}
+            </div>
             <div className="scrim" />
             <div className="label">
               <div>
                 <span className="num">
-                  {s.n} / {pad(SECTIONS.length)}
+                  {section.number} / {pad(sections.length)}
                 </span>
-                <div className="ttl">{s.title}</div>
+                <div className="ttl">{section.title}</div>
               </div>
               <div className="view">
-                {s.groups.length} chapters · {totalFrames(s)} frames <span>{"↗"}</span>
+                {section.groups.length} chapters · {totalFrames(section)} frames <span>{"↗"}</span>
               </div>
             </div>
           </div>
@@ -204,46 +214,46 @@ export default function Portfolio({ data }: { data: PortfolioData }) {
         {/* contact band — minimal: name + email */}
         <div className="contact">
           <span className="c-eyebrow">Contact</span>
-          <div className="c-name">{CONTACT.name}</div>
-          <a className="c-mail" href={"mailto:" + CONTACT.email}>
-            {CONTACT.email}
+          <div className="c-name">{contact.name}</div>
+          <a className="c-mail" href={"mailto:" + contact.email}>
+            {contact.email}
           </a>
-          <div className="c-loc">{CONTACT.location}</div>
+          <div className="c-loc">{contact.location}</div>
         </div>
       </div>
 
       {/* ---- stage ---- */}
       <div className={cn("stage", stageOn && "on")} ref={stageRef}>
         <div className="progress">
-          <div className="progbar" style={{ transform: "scaleX(" + String(progScale) + ")" }} />
+          <div className="progbar" style={{ transform: "scaleX(" + String(progressScale) + ")" }} />
         </div>
 
         <div className="track" ref={trackRef}>
-          {panels.map((pan, i) => {
-            const live = i === idx;
-            if (pan.kind === "hero") {
+          {panels.map((panel, index) => {
+            const live = index === panelIndex;
+            if (panel.kind === "hero") {
               return (
-                <div key={i} className={cn("panel hero", live && "live")}>
-                  <div className="ph">{makeImg(pan.g.hero.full, "cover", pan.g.hero.alt)}</div>
+                <div key={index} className={cn("panel hero", live && "live")}>
+                  <div className="ph">{makeImage(panel.group.hero.full, "cover", panel.group.hero.alt)}</div>
                   <div className="pscrim" />
                   <div className="hero-cap">
                     <div className="eyebrow">
-                      {`${pan.s.n} — ${pan.s.title} · Chapter ${pad(pan.gi + 1)} / ${pad(pan.s.groups.length)}`}
+                      {`${panel.section.number} — ${panel.section.title} · Chapter ${pad(panel.groupIndex + 1)} / ${pad(panel.section.groups.length)}`}
                     </div>
-                    <div className="big">{pan.g.title}</div>
+                    <div className="big">{panel.group.title}</div>
                     <div className="sub">
-                      {pan.g.meta
-                        ? pan.g.meta + " · " + String(pan.g.frames.length + 1) + " frames"
-                        : String(pan.g.frames.length + 1) + " frames"}
+                      {panel.group.meta
+                        ? panel.group.meta + " · " + String(panel.group.frames.length + 1) + " frames"
+                        : String(panel.group.frames.length + 1) + " frames"}
                     </div>
                   </div>
                 </div>
               );
             }
-            const fr = pan.g.frames[pan.local - 1];
+            const frame = panel.group.frames[panel.localIndex - 1];
             return (
-              <div key={i} className={cn("panel", live && "live")}>
-                <div className="ph">{fr ? makeImg(fr.full, "contain", fr.alt) : null}</div>
+              <div key={index} className={cn("panel", live && "live")}>
+                <div className="ph">{frame ? makeImage(frame.full, "contain", frame.alt) : null}</div>
                 <div className="pscrim" />
               </div>
             );
@@ -251,42 +261,51 @@ export default function Portfolio({ data }: { data: PortfolioData }) {
         </div>
 
         <div className="hud">
-          <div className="idx">{p ? pad(p.local + 1) + " / " + pad(total) : ""}</div>
+          <div className="idx">{currentPanel ? pad(currentPanel.localIndex + 1) + " / " + pad(frameCount) : ""}</div>
           <div className="cap">
-            {p ? (p.kind === "hero" ? p.g.title + (p.g.meta ? " — " + p.g.meta : "") : p.g.title) : ""}
+            {currentPanel
+              ? currentPanel.kind === "hero"
+                ? currentPanel.group.title + (currentPanel.group.meta ? " — " + currentPanel.group.meta : "")
+                : currentPanel.group.title
+              : ""}
           </div>
         </div>
 
-        <div className="marker">{p ? p.s.n + " · " + p.s.title : ""}</div>
+        <div className="marker">
+          {currentPanel ? currentPanel.section.number + " · " + currentPanel.section.title : ""}
+        </div>
 
-        <div className="rail" data-si={p ? String(p.si) : undefined}>
-          {p
-            ? p.s.groups.map((g, gi) => (
+        <div className="rail" data-si={currentPanel ? String(currentPanel.sectionIndex) : undefined}>
+          {currentPanel
+            ? currentPanel.section.groups.map((group, groupIndex) => (
                 <button
-                  key={g.key}
-                  className={cn(gi === p.gi && "on")}
+                  key={group.key}
+                  className={cn(groupIndex === currentPanel.groupIndex && "on")}
                   onClick={() => {
-                    goTo(groupStart.get(`${p.si}-${gi}`) ?? 0);
+                    goTo(groupStart.get(`${currentPanel.sectionIndex}-${groupIndex}`) ?? 0);
                   }}
                 >
-                  <span className="rn">{pad(gi + 1)}</span>
-                  <span className="rt">{g.title}</span>
+                  <span className="rn">{pad(groupIndex + 1)}</span>
+                  <span className="rt">{group.title}</span>
                 </button>
               ))
             : null}
         </div>
 
-        <div className="dots" data-gid={p ? `${p.si}-${p.gi}` : undefined}>
-          {p
-            ? Array.from({ length: total }).map((_, j) => {
-                const gs = groupStart.get(`${p.si}-${p.gi}`) ?? 0;
+        <div
+          className="dots"
+          data-gid={currentPanel ? `${currentPanel.sectionIndex}-${currentPanel.groupIndex}` : undefined}
+        >
+          {currentPanel
+            ? Array.from({ length: frameCount }).map((_, frameIndex) => {
+                const groupStartIndex = groupStart.get(`${currentPanel.sectionIndex}-${currentPanel.groupIndex}`) ?? 0;
                 return (
                   <button
-                    key={j}
-                    aria-label={"Frame " + String(j + 1)}
-                    className={cn(j === p.local && "on")}
+                    key={frameIndex}
+                    aria-label={"Frame " + String(frameIndex + 1)}
+                    className={cn(frameIndex === currentPanel.localIndex && "on")}
                     onClick={() => {
-                      goTo(gs + j);
+                      goTo(groupStartIndex + frameIndex);
                     }}
                   />
                 );
@@ -299,15 +318,23 @@ export default function Portfolio({ data }: { data: PortfolioData }) {
         </button>
 
         <div className="pager">
-          <button className="psec prev" style={{ visibility: prevS ? "visible" : "hidden" }} onClick={onPrevSec}>
-            {prevS ? "↑ " + prevS.title : ""}
+          <button
+            className="psec prev"
+            style={{ visibility: prevSection ? "visible" : "hidden" }}
+            onClick={onPrevSection}
+          >
+            {prevSection ? "↑ " + prevSection.title : ""}
           </button>
-          <button className="psec next" style={{ visibility: nextS ? "visible" : "hidden" }} onClick={onNextSec}>
-            {nextS ? nextS.title + " ↓" : ""}
+          <button
+            className="psec next"
+            style={{ visibility: nextSection ? "visible" : "hidden" }}
+            onClick={onNextSection}
+          >
+            {nextSection ? nextSection.title + " ↓" : ""}
           </button>
         </div>
 
-        <div className={cn("scrollcue", p && p.kind !== "hero" && "gone")}>
+        <div className={cn("scrollcue", currentPanel && currentPanel.kind !== "hero" && "gone")}>
           Scroll to explore <span>{"↓"}</span>
         </div>
 
@@ -316,7 +343,7 @@ export default function Portfolio({ data }: { data: PortfolioData }) {
           <button className="on">Single</button>
           <button
             onClick={() => {
-              if (p) showOverview(p.si);
+              if (currentPanel) showOverview(currentPanel.sectionIndex);
             }}
           >
             All
@@ -334,15 +361,15 @@ export default function Portfolio({ data }: { data: PortfolioData }) {
           <div className="ov-chrome">
             <button
               className="ov-arrow"
-              style={{ visibility: overviewSi > 0 ? "visible" : "hidden" }}
-              onClick={onOvPrev}
+              style={{ visibility: overviewSectionIndex > 0 ? "visible" : "hidden" }}
+              onClick={onOverviewPrev}
             >
               {"‹"}
             </button>
             <div className="vtoggle">
               <button
                 onClick={() => {
-                  openSingleAt(sectionStart[overviewSi] ?? 0);
+                  openSingleAt(sectionStart[overviewSectionIndex] ?? 0);
                 }}
               >
                 Single
@@ -351,42 +378,46 @@ export default function Portfolio({ data }: { data: PortfolioData }) {
             </div>
             <button
               className="ov-arrow"
-              style={{ visibility: overviewSi < SECTIONS.length - 1 ? "visible" : "hidden" }}
-              onClick={onOvNext}
+              style={{ visibility: overviewSectionIndex < sections.length - 1 ? "visible" : "hidden" }}
+              onClick={onOverviewNext}
             >
               {"›"}
             </button>
           </div>
 
-          {SECTIONS.map((s, si) => (
-            <div key={s.key} className={cn("ov-section", si === overviewSi && "on")} data-si={si}>
+          {sections.map((section, sectionIndex) => (
+            <div
+              key={section.key}
+              className={cn("ov-section", sectionIndex === overviewSectionIndex && "on")}
+              data-si={sectionIndex}
+            >
               <div
                 className="ov-main"
                 ref={(node) => {
-                  setOvMainRef(si, node);
+                  setOverviewMainRef(sectionIndex, node);
                 }}
               >
                 <div className="ov-inner">
-                  {s.groups.map((g, gi) => (
-                    <Fragment key={g.key}>
+                  {section.groups.map((group, groupIndex) => (
+                    <Fragment key={group.key}>
                       <div className="ov-chead">
-                        <span className="ocn">{pad(gi + 1)}</span>
-                        <span className="oct">{g.title}</span>
-                        {g.meta ? <span className="ocm">{g.meta}</span> : null}
+                        <span className="ocn">{pad(groupIndex + 1)}</span>
+                        <span className="oct">{group.title}</span>
+                        {group.meta ? <span className="ocm">{group.meta}</span> : null}
                       </div>
                       <div className="ov-grid">
-                        {[g.hero, ...g.frames].map((photo, j) => {
-                          const panelIndex = (groupStart.get(`${si}-${gi}`) ?? 0) + j;
+                        {[group.hero, ...group.frames].map((photo, cellIndex) => {
+                          const cellPanelIndex = (groupStart.get(`${sectionIndex}-${groupIndex}`) ?? 0) + cellIndex;
                           return (
                             <button
-                              key={j}
-                              className={cn("ov-cell", j === 0 && "lead")}
+                              key={cellIndex}
+                              className={cn("ov-cell", cellIndex === 0 && "lead")}
                               onClick={() => {
-                                openSingleAt(panelIndex);
+                                openSingleAt(cellPanelIndex);
                               }}
                             >
-                              {makeImg(photo.thumb, j === 0 ? "cover" : "contain", photo.alt)}
-                              <span className="ov-ci">{pad(j + 1)}</span>
+                              {makeImage(photo.thumb, cellIndex === 0 ? "cover" : "contain", photo.alt)}
+                              <span className="ov-ci">{pad(cellIndex + 1)}</span>
                             </button>
                           );
                         })}
@@ -398,30 +429,30 @@ export default function Portfolio({ data }: { data: PortfolioData }) {
 
               <div className="ov-side">
                 <span className="os-num">
-                  {s.n} / {pad(SECTIONS.length)}
+                  {section.number} / {pad(sections.length)}
                 </span>
-                <div className="os-title">{s.title}</div>
-                {s.tagline ? <div className="os-tag">{s.tagline}</div> : null}
+                <div className="os-title">{section.title}</div>
+                {section.tagline ? <div className="os-tag">{section.tagline}</div> : null}
                 <div className="os-chapters">
-                  {s.groups.map((g, gi) => (
+                  {section.groups.map((group, groupIndex) => (
                     <button
-                      key={g.key}
+                      key={group.key}
                       className="os-ch"
                       onClick={() => {
-                        onOvChapter(si, gi);
+                        onOverviewChapter(sectionIndex, groupIndex);
                       }}
                     >
-                      <span className="osc-n">{pad(gi + 1)}</span>
-                      <span className="osc-t">{g.title}</span>
+                      <span className="osc-n">{pad(groupIndex + 1)}</span>
+                      <span className="osc-t">{group.title}</span>
                       <span className="osc-m">
-                        {(g.meta ? g.meta + " · " : "") + String(g.frames.length + 1) + " frames"}
+                        {(group.meta ? group.meta + " · " : "") + String(group.frames.length + 1) + " frames"}
                       </span>
                     </button>
                   ))}
                 </div>
                 <div className="os-tags">
-                  {s.tags.map((t, ti) => (
-                    <span key={ti}>{t}</span>
+                  {section.tags.map((tag, tagIndex) => (
+                    <span key={tagIndex}>{tag}</span>
                   ))}
                 </div>
               </div>

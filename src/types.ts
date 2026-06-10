@@ -20,7 +20,7 @@ export interface Group {
 
 export interface Section {
   key: string;
-  n: string; // "01"
+  number: string; // "01"
   title: string;
   tagline: string;
   tags: string[];
@@ -34,10 +34,10 @@ export interface PortfolioData {
 }
 
 export interface Panel {
-  s: Section;
-  si: number;
-  g: Group;
-  gi: number;
+  section: Section;
+  sectionIndex: number;
+  group: Group;
+  groupIndex: number;
   kind: "hero" | "photo";
-  local: number; // 0 = hero, 1..N = frame index
+  localIndex: number; // 0 = hero, 1..N = frame index
 }

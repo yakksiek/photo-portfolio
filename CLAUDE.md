@@ -31,10 +31,15 @@ There is **no hand-built auth** — Marcin logs into Sanity Studio (Sanity-manag
 
 ### Key conventions
 
-- **Path alias**: `@/*` maps to `./src/*` (tsconfig paths).
+- **Local imports**: use **relative paths** (`./`, `../`) for files under `src/`. The `@/` alias is **banned** for local files and enforced by ESLint (`@typescript-eslint/no-restricted-imports`). The `@/* → ./src/*` mapping is retained in `tsconfig.json` only so shadcn/ui tooling resolves — after `npx shadcn add`, convert any generated `@/` import to a relative path.
+- **Import order**: group imports separated by a blank line, each group preceded by a comment header (include only the groups a file actually has):
+  1. `// core` — framework and library imports (react, astro, supabase, zod)
+  2. `// components` — component imports (Astro and React components, UI primitives)
+  3. `// others` — types, hooks, constants, utilities, services
+- **Naming**: code must be self-descriptive — prefer full, intention-revealing names over cryptic abbreviations (e.g. `section` not `s`, `groupIndex` not `gi`, `panel` not `p`). Avoid single-letter identifiers except trivial throwaway indices.
 - **Astro components** for static content/layout; **React components** only when interactivity is needed.
-- **Tailwind class merging**: use the `cn()` helper from `@/lib/utils` (clsx + tailwind-merge) for conditional/merged class names. Do not concatenate class strings manually.
-- **shadcn/ui**: components live in `src/components/ui/`, "new-york" style variant. Install new ones with `npx shadcn@latest add [name]`.
+- **Tailwind class merging**: use the `cn()` helper from `src/lib/utils` (clsx + tailwind-merge), imported via a relative path, for conditional/merged class names. Do not concatenate class strings manually.
+- **shadcn/ui**: components live in `src/components/ui/`, "new-york" style variant. Install new ones with `npx shadcn@latest add [name]`, then convert the generated `@/` imports to relative paths (see **Local imports**).
 - **API routes** (if any are added): use uppercase `GET`, `POST` exports; validate input with zod.
 - **Sanity content**: schema lives in `src/sanity/schema/`; query the public site via `sanityClient` (GROQ) and build image URLs with `urlFor()`. Editing is done in Studio (`/admin`) — content is data, not code.
 - **React**: no Next.js directives ("use client" etc.). Extract hooks to `src/components/hooks/`.

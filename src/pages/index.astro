@@ -1,19 +1,23 @@
 ---
 export const prerender = true;
 
-import Layout from "@/layouts/Layout.astro";
-import Portfolio from "@/components/Portfolio";
-import { urlFor } from "@/sanity/client";
-import { getSections } from "@/sanity/queries";
-import { sectionNumber, type Photo } from "@/sanity/types";
-import type { PortfolioData } from "@/types";
-import "@/styles/portfolio.css";
+// components
+import Layout from "../layouts/Layout.astro";
+import Portfolio from "../components/Portfolio";
 
-const cover = (p: Photo, w: number, h: number) => urlFor(p.image).width(w).height(h).fit("crop").auto("format").url();
-const contain = (p: Photo, w: number) => urlFor(p.image).width(w).auto("format").url();
+// others
+import { urlFor } from "../sanity/client";
+import { getSections } from "../sanity/queries";
+import { sectionNumber, type Photo } from "../sanity/types";
+import type { PortfolioData } from "../types";
+import "../styles/portfolio.css";
 
-const slug = (s: string) =>
-  s
+const cover = (photo: Photo, width: number, height: number) =>
+  urlFor(photo.image).width(width).height(height).fit("crop").auto("format").url();
+const contain = (photo: Photo, width: number) => urlFor(photo.image).width(width).auto("format").url();
+
+const slug = (value: string) =>
+  value
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
@@ -28,33 +32,35 @@ const meta = (place?: string | null, year?: number | null): string => {
 const sections = await getSections();
 
 const portfolioData: PortfolioData = {
-  sections: sections.map((s) => {
-    const groups = (s.chapters ?? [])
-      .map((c) => {
-        const photos = c.photos ?? [];
+  sections: sections.map((section) => {
+    const groups = (section.chapters ?? [])
+      .map((chapter) => {
+        const photos = chapter.photos ?? [];
         const heroPhoto = photos[0];
         if (!heroPhoto) return null;
         return {
-          key: slug(c.title),
-          title: c.title,
-          meta: meta(c.place, c.year),
+          key: slug(chapter.title),
+          title: chapter.title,
+          meta: meta(chapter.place, chapter.year),
           hero: { full: cover(heroPhoto, 2400, 1350), thumb: cover(heroPhoto, 1400, 788), alt: heroPhoto.alt },
-          frames: photos.slice(1).map((p) => ({
-            full: contain(p, 2000),
-            thumb: contain(p, 800),
-            alt: p.alt,
+          frames: photos.slice(1).map((photo) => ({
+            full: contain(photo, 2000),
+            thumb: contain(photo, 800),
+            alt: photo.alt,
           })),
         };
       })
-      .filter((g) => g !== null);
+      .filter((group) => group !== null);
 
     return {
-      key: slug(s.title),
-      n: sectionNumber(s),
-      title: s.title,
-      tagline: s.tagline ?? "",
-      tags: s.tags ?? [],
-      landing: s.landingHero?.image ? { src: cover(s.landingHero, 2000, 1400), alt: s.landingHero.alt } : null,
+      key: slug(section.title),
+      number: sectionNumber(section),
+      title: section.title,
+      tagline: section.tagline ?? "",
+      tags: section.tags ?? [],
+      landing: section.landingHero?.image
+        ? { src: cover(section.landingHero, 2000, 1400), alt: section.landingHero.alt }
+        : null,
       groups,
     };
   }),

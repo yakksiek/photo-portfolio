@@ -34,6 +34,20 @@ const baseConfig = tseslint.config({
     ],
     "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true }],
     "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: { attributes: false } }],
+    // Local imports must use relative paths. The @/ alias is retained in
+    // tsconfig.json only so shadcn/ui tooling resolves — convert any generated
+    // @/ import to a relative path after `npx shadcn add`.
+    "@typescript-eslint/no-restricted-imports": [
+      "error",
+      {
+        patterns: [
+          {
+            group: ["@/*"],
+            message: "Use a relative path (./, ../) for local imports; the @/ alias is reserved for shadcn/ui tooling.",
+          },
+        ],
+      },
+    ],
   },
 });
 
