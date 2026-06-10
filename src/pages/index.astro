@@ -2,9 +2,11 @@
 export const prerender = true;
 
 import Layout from "@/layouts/Layout.astro";
+import Portfolio from "@/components/Portfolio";
 import { urlFor } from "@/sanity/client";
 import { getSections } from "@/sanity/queries";
 import { sectionNumber, type Photo } from "@/sanity/types";
+import type { PortfolioData } from "@/types";
 import "@/styles/portfolio.css";
 
 const cover = (p: Photo, w: number, h: number) => urlFor(p.image).width(w).height(h).fit("crop").auto("format").url();
@@ -25,7 +27,7 @@ const meta = (place?: string | null, year?: number | null): string => {
 
 const sections = await getSections();
 
-const portfolioData = {
+const portfolioData: PortfolioData = {
   sections: sections.map((s) => {
     const groups = (s.chapters ?? [])
       .map((c) => {
@@ -65,9 +67,7 @@ const portfolioData = {
 ---
 
 <Layout title="Marcin Kulbicki — Photography">
-  <div class="viewport theme-a" id="stageRoot" tabindex="-1" data-portfolio={JSON.stringify(portfolioData)}></div>
-  <script>
-    import { boot } from "@/scripts/portfolio";
-    boot();
-  </script>
+  <Portfolio client:only="react" data={portfolioData}>
+    <div class="viewport theme-a" slot="fallback"></div>
+  </Portfolio>
 </Layout>
