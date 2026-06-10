@@ -1,10 +1,10 @@
 ---
 change_id: landing-full-height-bands
 title: Make landing section bands fill the full viewport height (drop the 88vh creep)
-status: implemented
+status: archived
 created: 2026-06-10
 updated: 2026-06-10
-archived_at: null
+archived_at: 2026-06-10T12:03:15Z
 ---
 
 ## Notes

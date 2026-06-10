@@ -1,10 +1,10 @@
 ---
 change_id: desktop-fidelity-verification
 title: Verify the live desktop site renders pixel-faithfully to the reference build
-status: implemented
+status: archived
 created: 2026-06-10
 updated: 2026-06-10
-archived_at: null
+archived_at: 2026-06-10T12:03:15Z
 ---
 
 ## Notes

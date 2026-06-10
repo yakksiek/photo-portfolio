@@ -45,7 +45,7 @@ guardrail) on **both** desktop and mobile — and today it is not, on mobile or 
 | ----- | ----------------------------- | ---------------------------------------------------------------- | ------------- | --------------------------------- | -------- |
 | F-01  | operational-safety-baseline   | (foundation) rehearsed rollback path + account 2FA before prod changes | —             | infra risk register               | done     |
 | S-01  | landing-discrete-section-scroll | scroll the landing and advance one whole section per scroll-step (no free-scroll-then-snap) | —             | US-02, FR-008                     | ready    |
-| S-02  | desktop-fidelity-verification | trust the live desktop site renders pixel-faithfully to the reference, all content + both modes | —             | US-01, US-02, FR-001–004, FR-006–009 | ready    |
+| S-02  | desktop-fidelity-verification | trust the live desktop site renders pixel-faithfully to the reference, all content + both modes | —             | US-01, US-02, FR-001–004, FR-006–009 | done     |
 | S-03  | performance-nfr-verification  | trust the live site meets its performance & resilience guardrails | —             | FR-005, FR-007, all NFRs          | ready    |
 | S-04  | mobile-parity-rework          | browse the full site on mobile — both modes, touch, faithful layout | —             | US-02, FR-008, FR-009, FR-010     | blocked  |
 
@@ -116,7 +116,7 @@ but mobile is effectively unbuilt and the landing scroll is broken (see Slices).
 - **Unknowns:**
   - Is there a captured reference (screenshots / the `design-reference/` HTML) to diff against, or is fidelity judged by eye? — Owner: Marcin. Block: no.
 - **Risk:** The code probes confirm the pipeline *exists* but cannot confirm it renders *faithfully*; this is the desktop half of "manual check everything". Surfaces any defect like S-01 before it reaches a brand's screen. Verification-only — no build.
-- **Status:** ready
+- **Status:** done
 
 ### S-03: Performance & resilience NFRs verified on the live site
 
@@ -177,3 +177,4 @@ but mobile is effectively unbuilt and the landing scroll is broken (see Slices).
 ## Done
 
 - **F-01: (foundation) a rehearsed rollback path (`wrangler deployments list` / `wrangler rollback`) and account 2FA are confirmed, so changes can ship to the live brand-facing site with a known revert net** — Archived 2026-06-10 → `context/archive/2026-06-10-operational-safety-baseline/`. Lesson: —.
+- **S-02: The owner can trust that the live desktop site renders pixel-faithfully to the reference build across the landing, Single mode, and All mode — with all CMS content (sections, chapters, photos, landing heroes, derived numbering, cover/contain fit) rendering correctly — and any gap is documented** — Archived 2026-06-10 → `context/archive/2026-06-10-desktop-fidelity-verification/`. Lesson: a captured reference whose images are empty drop-slots can't be pixel-diffed — fidelity is judged on layout/chrome/motion/fit, and the one "creep" gap turned out to match the reference (spawned `landing-full-height-bands` as a deliberate design change).
