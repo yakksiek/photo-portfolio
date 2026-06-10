@@ -252,7 +252,7 @@ export function usePortfolioEngine(data: PortfolioData) {
   // Advance exactly one whole landing target per step, mirroring the stage's
   // step/lock pattern. Clamped at both ends; the lock collapses a single wheel
   // gesture into one step and prevents `mandatory` snap from fighting the
-  // in-flight smooth scroll. Touch is NOT handled here (native; S-04 owns it).
+  // in-flight smooth scroll. Touch is wired below (S-04) and reuses this directly.
   const landingStep = useCallback(
     (direction: number) => {
       if (landingLockRef.current) return;
@@ -288,6 +288,45 @@ export function usePortfolioEngine(data: PortfolioData) {
     landing.addEventListener("wheel", onLandingWheel, { passive: false });
     return () => {
       landing.removeEventListener("wheel", onLandingWheel);
+    };
+  }, [landingStep]);
+
+  // touch listener on the landing (attach once; read fresh state via refs).
+  // Mirrors the stage touch effect (below) but drives landingStep instead of
+  // step. Unlike the stage's passive listeners, touchmove registers
+  // { passive: false } and preventDefaults so native landing scroll/snap does
+  // not fight the engine — the same reason the wheel path preventDefaults. The
+  // S-04 mobile fix: this is what makes a swipe advance exactly one section.
+  useEffect(() => {
+    const landing = landingRef.current;
+    if (!landing) return;
+    const onTouchStart = (event: TouchEvent) => {
+      if (stageOnRef.current || overviewOnRef.current) return; // landing not the visible surface
+      const touch = event.touches[0];
+      touchStartYRef.current = touch ? touch.clientY : null;
+    };
+    const onTouchMove = (event: TouchEvent) => {
+      if (stageOnRef.current || overviewOnRef.current) return; // landing not the visible surface
+      if (touchStartYRef.current == null) return;
+      event.preventDefault();
+      const touch = event.touches[0];
+      if (!touch) return;
+      const deltaY = touchStartYRef.current - touch.clientY;
+      if (Math.abs(deltaY) > TOUCH_THRESHOLD) {
+        landingStep(deltaY > 0 ? 1 : -1);
+        touchStartYRef.current = null;
+      }
+    };
+    const onTouchEnd = () => {
+      touchStartYRef.current = null;
+    };
+    landing.addEventListener("touchstart", onTouchStart, { passive: true });
+    landing.addEventListener("touchmove", onTouchMove, { passive: false });
+    landing.addEventListener("touchend", onTouchEnd);
+    return () => {
+      landing.removeEventListener("touchstart", onTouchStart);
+      landing.removeEventListener("touchmove", onTouchMove);
+      landing.removeEventListener("touchend", onTouchEnd);
     };
   }, [landingStep]);
 

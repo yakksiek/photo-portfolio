@@ -358,16 +358,16 @@ None — no schema or data changes. Pure front-end. Rollback is a code revert; F
 
 #### Automated
 
-- [ ] 1.1 Lint passes: `npm run lint`
-- [ ] 1.2 Format check clean: `npm run format` (no diff)
-- [ ] 1.3 Build succeeds: `npm run build`
+- [x] 1.1 Lint passes: `npm run lint`
+- [x] 1.2 Format check clean: `npm run format` (no diff)
+- [x] 1.3 Build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 1.4 Landing browses section-by-section with no breakage (discrete-step primary, or native-scroll-snap fallback)
-- [ ] 1.5 Intro/bands/contact fill the screen with no address-bar gap; no jump on scroll
-- [ ] 1.6 Desktop wheel/keyboard landing stepping unchanged
-- [ ] 1.7 Reduced-motion: landing touch stepping jumps instantly
+- [x] 1.4 Landing browses section-by-section with no breakage (discrete-step primary, or native-scroll-snap fallback)
+- [x] 1.5 Intro/bands/contact fill the screen with no address-bar gap; no jump on scroll
+- [x] 1.6 Desktop wheel/keyboard landing stepping unchanged
+- [x] 1.7 Reduced-motion: landing touch stepping jumps instantly
 
 ### Phase 2: Mobile chrome — hamburger menu overlay
 

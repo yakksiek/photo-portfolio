@@ -191,7 +191,7 @@ body {
 /* intro / title band */
 .intro {
   position: relative;
-  height: 100vh;
+  height: 100svh; /* svh == vh on desktop; stable fill on mobile (bar pinned, no jump) */
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -228,12 +228,7 @@ body {
   opacity: var(--intro-dim-now, 1);
   transition: opacity 0.9s var(--ease);
   background:
-    linear-gradient(
-      180deg,
-      rgba(11, 11, 12, 0.62) 0%,
-      rgba(11, 11, 12, 0.34) 42%,
-      rgba(11, 11, 12, 0.78) 100%
-    ),
+    linear-gradient(180deg, rgba(11, 11, 12, 0.62) 0%, rgba(11, 11, 12, 0.34) 42%, rgba(11, 11, 12, 0.78) 100%),
     radial-gradient(120% 92% at 50% 40%, transparent 46%, rgba(11, 11, 12, 0.72) 100%);
 }
 .intro .name,
@@ -405,7 +400,7 @@ body {
 /* section bands */
 .band {
   position: relative;
-  height: 100vh;
+  height: 100svh; /* svh == vh on desktop; stable fill on mobile (bar pinned, no jump) */
   min-height: 420px;
   scroll-snap-align: start;
   overflow: hidden;
@@ -492,7 +487,7 @@ body {
 /* contact band — minimal: name + email */
 .contact {
   position: relative;
-  min-height: 80vh;
+  min-height: 80svh; /* svh == vh on desktop; stable fill on mobile (bar pinned, no jump) */
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
@@ -1179,6 +1174,23 @@ body {
   .ov-main {
     height: auto;
     overflow: visible;
+  }
+}
+
+/* ============================================================
+   PHONE — ≤768px mobile layouts (S-04, mobile-parity-rework).
+   Home for the mobile build (Phases 2–5 layer in here); refines
+   the 880px overview reflow above. All rules are phone-scoped so
+   the desktop site (verified faithful, S-02) is untouched —
+   svh/dvh collapse to vh on desktop, so the unit swaps are no-ops
+   there too.
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Landing stepping is engine-driven on touch (usePortfolioEngine landing
+     touch effect): neutralize native mandatory snap so it doesn't fight the
+     in-flight smooth scrollTo. */
+  .landing {
+    scroll-snap-type: none;
   }
 }
 

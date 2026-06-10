@@ -1,7 +1,7 @@
 ---
 change_id: mobile-parity-rework
 title: Build the mobile experience — landing, Single, and All usable via touch with a faithful layout
-status: planned
+status: implementing
 created: 2026-06-10
 updated: 2026-06-10
 archived_at: null
