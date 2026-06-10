@@ -405,7 +405,7 @@ body {
 /* section bands */
 .band {
   position: relative;
-  height: 88vh;
+  height: 100vh;
   min-height: 420px;
   scroll-snap-align: start;
   overflow: hidden;
